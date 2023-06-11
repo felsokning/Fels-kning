@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net5.0;net6.0;net7.0;</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Version>7.0.0</Version>
+    <Authors>John Bailey</Authors>
+    <Company>Felsökning</Company>
+    <Description>An assembly that contains several extension methods relevant to (and inclusive of) the Swedish (and other) culture(s).</Description>
+    <Copyright>Copyright © 2023 Felsökning</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://dev.azure.com/felsokningen/_git/Felsökning.Utilities.SwedishUtilities?path=%2FFels%C3%B6kning.Utilities.SwedishUtilities%2FFels%C3%B6kning.Utilities.SvenskaUtilities</PackageProjectUrl>
+    <PackageIconUrl />
+    <PackageTags>swedish svenska svensk personnummer postnummer ISO:8601 extensions felsökning felsokning veckans nummer riktig long</PackageTags>
+    <PackageReleaseNotes>Initial Release, Supporting .NET 6 and .NET 7</PackageReleaseNotes>
+    <RepositoryUrl>https://dev.azure.com/felsokningen/_git/Felsökning.Utilities.SwedishUtilities?path=%2FFels%C3%B6kning.Utilities.SwedishUtilities%2FFels%C3%B6kning.Utilities.SvenskaUtilities</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+</Project>

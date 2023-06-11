@@ -1,0 +1,23 @@
+name: Build and Publish on MultiNet Container
+
+# Required Since Release Creation in GitHub (itself) doesn't create a push (not remote)
+on:
+  release:
+    types:
+    - created
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: felsokning/multinet:latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: .NET Restore
+        run: dotnet restore --verbosity=normal
+      - name: .NET Build
+        run: dotnet build --no-restore --verbosity=normal
+      - name: .NET Test
+        run: dotnet test --no-restore --verbosity=normal
+      - name: Push to NuGet
+        run: dotnet nuget push "*.nupkg" --api-key ${{secrets.nuget_api_key}} --source https://api.nuget.org/v3/index.json

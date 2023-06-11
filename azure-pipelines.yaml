@@ -1,0 +1,82 @@
+# .NET Desktop
+# Build and run tests for .NET Desktop or Windows classic desktop solutions.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
+name: 7.0$(rev:.r)
+
+trigger:
+  branches:
+    include:
+      - master
+
+pr:
+  branches:
+    include:
+    - '*'  # must quote since "*" is a YAML reserved character; we want a string
+  
+pool:
+  vmImage: 'windows-latest'
+  
+variables:
+  - group: Science
+  - name: solution
+    value: '**/*.sln'
+  - name: buildPlatform
+    value: 'Any CPU'
+  - name: debugConfiguration
+    value: 'Debug'
+  - name: releaseConfiguration
+    value: 'Release'
+
+stages:
+  - stage: build_and_test_assembly
+    displayName: 'Build and Test Assembly'
+    pool:
+      vmImage: 'windows-latest'
+    
+    jobs:
+      - job: build
+        displayName: 'Build Assembly'
+        steps:
+        - task: NuGetToolInstaller@1
+          # Add this command to include the .NET7.0 SDK
+        - task: UseDotNet@2
+          displayName: 'Use .NET7.0 SDK'
+          inputs:
+            packageType: 'sdk'
+            version: '7.0.x'
+            includePreviewVersions: false
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'custom'
+            projects: '**/*/*.csproj'
+            custom: 'restore'
+          displayName: 'dotnet restore $(releaseConfiguration)'
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'build'
+            projects: '**/*/*.csproj'
+            arguments: '--configuration $(releaseConfiguration)'
+          displayName: 'dotnet build $(releaseConfiguration)'
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'test'
+            projects: '**/*/*.csproj'
+            arguments: '--configuration $(releaseConfiguration)'
+            testRunTitle: 'dotnet test $(releaseConfiguration)'
+            publishTestResults: true
+          displayName: 'dotnet test $(debugConfiguration)'
+        - task: DotNetCoreCLI@2
+          displayName: 'dotnet pack $(releaseConfiguration)'
+          inputs:
+            command: pack
+            configuration: 'Release'
+            versioningScheme: byBuildNumber
+        # Publish the NuGet Package to NuGet.org
+        - task: Bash@3
+          displayName: 'Publish to NuGet.org'
+          condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+          inputs:
+            targetType: 'inline'
+            script: |
+              dotnet nuget push '$(Build.ArtifactStagingDirectory)/Felsökning.$(Build.BuildNumber).nupkg' --api-key $(NuGetApiKey) --source https://api.nuget.org/v3/index.json
