@@ -5,9 +5,8 @@
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>7.0.0</Version>
     <Authors>John Bailey</Authors>
     <Company>Felsökning</Company>
     <Description>An assembly that contains several extension methods relevant to (and inclusive of) the Swedish (and other) culture(s).</Description>
