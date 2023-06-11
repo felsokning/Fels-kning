@@ -13,6 +13,20 @@ namespace Felsökning.Tests
         [TestMethod]
         public async Task AggregateException_Unbox()
         {
+            string newLineChar = string.Empty;
+            if (OperatingSystem.IsWindows())
+            {
+                newLineChar = "\r\n";
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                newLineChar = "\n";
+            }
+            else
+            {
+                throw new StatusException($"Operating System is not supported.");
+            }
+
             var innerMostException = new Exception();
             var innerException = new Exception("Bad science", innerMostException);
             var argumentException = new ArgumentException("Argument Exception Message", innerException);
@@ -26,13 +40,13 @@ namespace Felsökning.Tests
             result.Length.Should().Be(3);
             var hresults = result[0];
             hresults.Should().NotBeNullOrEmpty();
-            hresults.Should().Be("-2146233088\r\n-2147467261\r\n-2147024809\r\n");
+            hresults.Should().Be($"-2146233088{newLineChar}-2147467261{newLineChar}-2147024809{newLineChar}");
             var messages = result[1];
             messages.Should().NotBeNullOrEmpty();
-            messages.Should().Be("Exception of type 'System.Exception' was thrown.\r\nBad science\r\nArgument Exception Message\r\nNull Reference Exception Message\r\nOne or more errors occurred. (Null Reference Exception Message)\r\n");
+            messages.Should().Be($"Exception of type 'System.Exception' was thrown.{newLineChar}Bad science{newLineChar}Argument Exception Message{newLineChar}Null Reference Exception Message{newLineChar}One or more errors occurred. (Null Reference Exception Message){newLineChar}");
             var stackTrace = result[2];
             stackTrace.Should().NotBeNullOrEmpty();
-            stackTrace.Should().Contain("\r\n--- End of stack trace from previous location where exception was thrown ---\r\n");
+            stackTrace.Should().Contain($"{newLineChar}--- End of stack trace from previous location where exception was thrown ---{newLineChar}");
         }
     }
 }
