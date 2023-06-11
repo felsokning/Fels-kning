@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net5.0;net6.0;net7.0;net8.0;</TargetFrameworks>
+    <TargetFrameworks>net5.0;net6.0;net7.0;</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
@@ -14,14 +14,14 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/felsokning/Fels-kning</PackageProjectUrl>
     <PackageIconUrl />
-    <PackageReadmeFile>docs/README.md</PackageReadmeFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>date time datetime collection aggregate aggregateexception encrypted file encryptedfile http httpBase httpExtensions httprecord type typeextenion swedish svenska svensk personnummer postnummer ISO:8601 extensions felsökning felsokning veckans nummer riktig long</PackageTags>
     <PackageReleaseNotes>Adding README file for NuPkg Parse in NuGet.</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/felsokning/Fels-kning</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="docs/README.md" Pack="true" PackagePath="\">
+    <None Include="docs\README.md" Pack="true" PackagePath="\">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
