@@ -39,4 +39,4 @@ jobs:
       - name: .NET Pack
         run: dotnet pack /p:Version=${{ github.event.release.tag_name }}
       - name: Push to NuGet
-        run: dotnet nuget push "**/*.nupkg" --api-key ${{ secrets.NuGet_API_Token }} --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push "**/*.nupkg" --api-key ${{ secrets.NUGET_API_TOKEN }} --source https://api.nuget.org/v3/index.json
