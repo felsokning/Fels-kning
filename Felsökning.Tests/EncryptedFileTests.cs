@@ -4,8 +4,6 @@
 // </copyright>
 // <author>John Bailey</author>
 // ----------------------------------------------------------------------
-using System.Text;
-
 namespace Felsökning.Tests
 {
     [ExcludeFromCodeCoverage]
@@ -17,32 +15,36 @@ namespace Felsökning.Tests
         [Platform(Include = "Win")]
         public void EncrypedFile_ctor()
         {
-            var filePath = $"{Environment.CurrentDirectory}/Test.file";
-            if (!File.Exists(filePath))
+            // Not testable on Linux.
+            if (!OperatingSystem.IsLinux())
             {
-                File.Create(filePath);
-            }
-
-            // Prevent lock contention after th creation.
-            Thread.Sleep(1000);
-
-            using (var result = new EncryptedFile(filePath))
-            {
-                result.Should().NotBeNull();
-                result.Should().BeOfType<EncryptedFile>();
-
-                using (var stream = result.DecryptAndOpen())
+                var filePath = $"{Environment.CurrentDirectory}/Test.file";
+                if (!File.Exists(filePath))
                 {
-                    var contentString = "This is some secret string.";
-                    var contentBytes = ASCIIEncoding.ASCII.GetBytes(contentString);
-                    stream.Write(contentBytes);
+                    File.Create(filePath);
                 }
+
+                // Prevent lock contention after the creation.
+                Thread.Sleep(1000);
+
+                using (var result = new EncryptedFile(filePath))
+                {
+                    result.Should().NotBeNull();
+                    result.Should().BeOfType<EncryptedFile>();
+
+                    using (var stream = result.DecryptAndOpen())
+                    {
+                        var contentString = "This is some secret string.";
+                        var contentBytes = ASCIIEncoding.ASCII.GetBytes(contentString);
+                        stream.Write(contentBytes);
+                    }
+                }
+
+                var fileAttributes = File.GetAttributes(filePath);
+                fileAttributes.Should().Be(FileAttributes.Encrypted);
+
+                File.Delete(filePath);
             }
-
-            var fileAttributes = File.GetAttributes(filePath);
-            fileAttributes.Should().Be(FileAttributes.Encrypted);
-
-            File.Delete(filePath);
         }
 
         [TestMethod]
