@@ -9,14 +9,20 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>John Bailey</Authors>
     <Company>Felsökning</Company>
-    <Description>An assembly that contains several extension methods relevant to (and inclusive of) the Swedish (and other) culture(s).</Description>
+    <Description>The base library used by other Felsökning NuGet libraries.</Description>
     <Copyright>Copyright © 2023 Felsökning</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://dev.azure.com/felsokningen/_git/Felsökning.Utilities.SwedishUtilities?path=%2FFels%C3%B6kning.Utilities.SwedishUtilities%2FFels%C3%B6kning.Utilities.SvenskaUtilities</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/felsokning/Fels-kning</PackageProjectUrl>
     <PackageIconUrl />
-    <PackageTags>swedish svenska svensk personnummer postnummer ISO:8601 extensions felsökning felsokning veckans nummer riktig long</PackageTags>
-    <PackageReleaseNotes>Initial Release, Supporting .NET 6 and .NET 7</PackageReleaseNotes>
-    <RepositoryUrl>https://dev.azure.com/felsokningen/_git/Felsökning.Utilities.SwedishUtilities?path=%2FFels%C3%B6kning.Utilities.SwedishUtilities%2FFels%C3%B6kning.Utilities.SvenskaUtilities</RepositoryUrl>
+    <PackageReadmeFile>docs/README.md</PackageReadmeFile>
+    <PackageTags>date time datetime collection aggregate aggregateexception encrypted file encryptedfile http httpBase httpExtensions httprecord type typeextenion swedish svenska svensk personnummer postnummer ISO:8601 extensions felsökning felsokning veckans nummer riktig long</PackageTags>
+    <PackageReleaseNotes>Adding README file for NuPkg Parse in NuGet.</PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/felsokning/Fels-kning</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="docs\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 </Project>
+
+
