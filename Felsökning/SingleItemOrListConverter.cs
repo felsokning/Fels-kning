@@ -23,7 +23,10 @@ namespace Felsökning
                 JsonTokenType.StartObject =>
                     JsonSerializer.Deserialize<Wrapper>(ref reader, options)?.Items,
                 JsonTokenType.Number =>
-                    new List<T> { JsonSerializer.Deserialize<T>(ref reader, options) },
+                    new List<T>()
+                    {
+                        JsonSerializer.Deserialize<T>(ref reader, options)!
+                    },
                 _ => throw new JsonException()
             };
 
@@ -33,6 +36,6 @@ namespace Felsökning
             => JsonSerializer.Serialize(writer, (object?)value, options);
 
 
-        private record Wrapper(List<T> Items);
+        private sealed record Wrapper(List<T> Items);
     }
 }
