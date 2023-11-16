@@ -21,11 +21,8 @@ namespace Felsökning.Tests
                 var filePath = $"{Environment.CurrentDirectory}/Test.file";
                 if (!File.Exists(filePath))
                 {
-                    File.Create(filePath);
+                    File.Create(filePath).Close();
                 }
-
-                // Prevent lock contention after the creation.
-                Thread.Sleep(1000);
 
                 using (var result = new EncryptedFile(filePath))
                 {
@@ -41,7 +38,7 @@ namespace Felsökning.Tests
                 }
 
                 var fileAttributes = File.GetAttributes(filePath);
-                fileAttributes.Should().Be(FileAttributes.Encrypted);
+                fileAttributes.Should().Be(FileAttributes.Archive | FileAttributes.Encrypted);
 
                 File.Delete(filePath);
             }

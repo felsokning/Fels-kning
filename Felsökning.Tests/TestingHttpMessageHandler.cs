@@ -18,15 +18,15 @@ namespace Felsökning.Tests
         ///     Overrides the <see cref="SendAsync(HttpRequestMessage, CancellationToken)"/> method in <see cref="HttpMessageHandler"/>
         ///     to return a specified <see cref="HttpResponseMessage"/>, based on the URL called.
         /// </summary>
-        /// <param name="httpRequestMessage"></param>
+        /// <param name="request"></param>
         /// <param name="cancellationToken"></param>
         /// <returns>A <see cref="Task{TResult}"/> of <see cref="HttpResponseMessage"/> for the test class[es] to consume.</returns>
         /// <exception cref="HttpRequestException">A response to mock exceptions thrown on request.</exception>
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             HttpResponseMessage responseMessage = new HttpResponseMessage();
 
-            if (httpRequestMessage?.RequestUri?.AbsoluteUri == "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty")
+            if (request?.RequestUri?.AbsoluteUri == "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty")
             {
                 responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
                 responseMessage.StatusCode = HttpStatusCode.OK;
@@ -35,7 +35,7 @@ namespace Felsökning.Tests
                 return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
             }
 
-            if (httpRequestMessage?.RequestUri?.AbsoluteUri == "https://hacker-news.firebaseio.com/v0/item/32649091.json?print=pretty")
+            if (request?.RequestUri?.AbsoluteUri == "https://hacker-news.firebaseio.com/v0/item/32649091.json?print=pretty")
             {
                 responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
                 responseMessage.StatusCode = HttpStatusCode.OK;
@@ -44,7 +44,7 @@ namespace Felsökning.Tests
                 return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
             }
 
-            if ((bool)httpRequestMessage?.RequestUri?.AbsoluteUri?.Contains("https://api.dw.com/api/search/global?terms=*&contentTypes=Article&languageId=15"))
+            if (request?.RequestUri?.AbsoluteUri?.Contains("https://api.dw.com/api/search/global?terms=*&contentTypes=Article&languageId=15") == true)
             {
                 responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
                 responseMessage.StatusCode = HttpStatusCode.OK;
@@ -53,7 +53,7 @@ namespace Felsökning.Tests
                 return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
             }
 
-            if (httpRequestMessage?.RequestUri?.AbsoluteUri == "https://jsonplaceholder.typicode.com/todos/1")
+            if (request?.RequestUri?.AbsoluteUri == "https://jsonplaceholder.typicode.com/todos/1")
             {
                 responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
                 responseMessage.StatusCode = HttpStatusCode.OK;
@@ -68,7 +68,7 @@ namespace Felsökning.Tests
                 return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
             }
 
-            if (httpRequestMessage?.RequestUri?.AbsoluteUri == "https://jsonplaceholder.typicode.com/todos/2")
+            if (request?.RequestUri?.AbsoluteUri == "https://jsonplaceholder.typicode.com/todos/2")
             {
                 responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
                 responseMessage.StatusCode = HttpStatusCode.OK;
@@ -83,7 +83,7 @@ namespace Felsökning.Tests
                 return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
             }
 
-            if (httpRequestMessage?.RequestUri?.AbsoluteUri == "https://jsonplaceholder.typicode.com/todos/3")
+            if (request?.RequestUri?.AbsoluteUri == "https://jsonplaceholder.typicode.com/todos/3")
             {
                 responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
                 responseMessage.StatusCode = HttpStatusCode.NotFound;
@@ -91,9 +91,8 @@ namespace Felsökning.Tests
                 return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
             }
 
-            if (httpRequestMessage?.RequestUri?.AbsoluteUri == "https://jsonplaceholder.typicode.com/todos/999999")
+            if (request?.RequestUri?.AbsoluteUri == "https://jsonplaceholder.typicode.com/todos/999999")
             {
-                var httpRequestException = new HttpRequestException();
                 throw new HttpRequestException();
             }
 
