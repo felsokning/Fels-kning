@@ -287,6 +287,7 @@ namespace Felsökning
         /// </summary>
         /// <param name="product">The product to be handled.</param>
         /// <returns>The sum of the product's integers.</returns>
+        [ExcludeFromCodeCoverage]
         private static int ReduceGreaterThanNine(int product)
         {
             if (product > 9)

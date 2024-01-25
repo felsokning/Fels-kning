@@ -18,11 +18,16 @@ namespace Felsökning
         /// <param name="productInfoString">The <see cref="System.Runtime.InteropServices.OptionalAttribute"/> assembly reference/name to include in the header.</param>
         public HttpBase(Version httpVersion, [Optional] string productInfoString)
         {
-            HttpClient = new HttpClient
+            var httpClientHandler = new HttpClientHandler()
+            { 
+                SslProtocols = SslProtocols.Tls13 
+            };
+
+            HttpClient = new HttpClient(httpClientHandler)
             {
                 // Disallow protocol downgrade[s] - which is a common attack vector.
                 DefaultRequestVersion = httpVersion,
-                DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher
+                DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher,
             };
 
             var correlationId = Guid.NewGuid().ToString();

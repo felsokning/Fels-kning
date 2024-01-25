@@ -40,6 +40,19 @@ namespace Felsökning.Tests
                 var fileAttributes = File.GetAttributes(filePath);
                 fileAttributes.Should().Be(FileAttributes.Archive | FileAttributes.Encrypted);
 
+                using (var encryptedFileResult = new EncryptedFile(filePath))
+                {
+
+                    encryptedFileResult.Should().NotBeNull();
+                    encryptedFileResult.Should().BeOfType<EncryptedFile>();
+
+                    using (var fileStream = encryptedFileResult.DecryptAndOpen())
+                    {
+                        fileStream.Should().NotBeNull();
+                        fileStream.Should().BeOfType<FileStream>();
+                    }
+                }
+
                 File.Delete(filePath);
             }
         }
