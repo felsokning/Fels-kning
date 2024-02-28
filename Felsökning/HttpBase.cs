@@ -19,8 +19,9 @@ namespace Felsökning
         public HttpBase(Version httpVersion, [Optional] string productInfoString)
         {
             var httpClientHandler = new HttpClientHandler()
-            { 
-                SslProtocols = SslProtocols.Tls13 
+            {
+                //SslProtocols.Tls13
+                SslProtocols = SslProtocols.Tls12
             };
 
             HttpClient = new HttpClient(httpClientHandler)
