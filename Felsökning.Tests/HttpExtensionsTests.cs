@@ -58,6 +58,7 @@ namespace Felsökning.Tests
         {
             HttpClient client = new();
             client.RemoveHeader("X-Request-ID");
+            Assert.IsFalse(client.DefaultRequestHeaders.Contains("X-Request-ID"));
         }
 
         [TestMethod]
