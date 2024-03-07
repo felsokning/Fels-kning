@@ -54,7 +54,7 @@ namespace Felsökning
         /// <returns>A long representing the Unix Epoc time.</returns>
         public static long ToPosixTime(this DateTime dateTime)
         {
-            DateTime whenDinosaursRoamedTheEarth = new DateTime(year: 1970, month: 01, day: 01);
+            DateTime whenDinosaursRoamedTheEarth = DateTime.UnixEpoch;
             long currentDateTimeTicks = dateTime.Ticks;
             long whenDinosaursRoamedTheEarthTicks = whenDinosaursRoamedTheEarth.Ticks;
             return (currentDateTimeTicks - whenDinosaursRoamedTheEarthTicks) / 10000000;
@@ -90,7 +90,7 @@ namespace Felsökning
         /// <returns>A long representing the Unix Epoc time.</returns>
         public static long ToUnixEpochTime(this DateTime dateTime)
         {
-            DateTime whenDinosaursRoamedTheEarth = new DateTime(year: 1970, month: 01, day: 01);
+            DateTime whenDinosaursRoamedTheEarth = DateTime.UnixEpoch;
             long currentDateTimeTicks = dateTime.Ticks;
             long whenDinosaursRoamedTheEarthTicks = whenDinosaursRoamedTheEarth.Ticks;
             return (currentDateTimeTicks - whenDinosaursRoamedTheEarthTicks) / 10000000;

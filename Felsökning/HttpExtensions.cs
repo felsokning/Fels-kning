@@ -468,7 +468,6 @@ namespace Felsökning
         {
             if (httpClient.DefaultRequestHeaders.Contains(name: name))
             {
-                var existingRequestId = httpClient.DefaultRequestHeaders.GetValues(name).FirstOrDefault();
                 httpClient.DefaultRequestHeaders.Remove(name: name);
             }
         }

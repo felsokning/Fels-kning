@@ -1,5 +1,5 @@
 # Felsökning NuGet Package
-The Felsökning NuGet Package is, generally, the base package used/consumed/referenced by all other Felsökning NuGet packages.
+The Felsökning NuGet Package is, generally, the base package used/consumed/referenced by all other Felsökning NuGet packages (since .NET6.0).
 
 ## `AggregateExceptionExtensions`
 This static class contains extension methods for the [AggregateException](https://learn.microsoft.com/en-us/dotnet/api/system.aggregateexception) class.
@@ -87,3 +87,13 @@ NOTE: Only supported on Windows Systems, Professional.
 `DecryptAndOpen()`
 #### Definition
 Decrypts the file (if encrypted) and returns the [FileStream](https://learn.microsoft.com/en-us/dotnet/api/system.io.filestream) from opening the file.
+
+## HttpBase
+This is a base class meant for inheritance in any class that needs/depends on HttpClient.
+
+The HttpClient within `HttpBase` is initialized as using TLS1.3 and has default headers applied, such as `X-Correlation-ID`.
+
+## HttpExtensions
+The `HttpExensions` class contains extensions to perform most HTTP-related tasks (e.g.: Get, Post, Put, etc.) and have the returned serialized into the `T` of your choice.
+
+For example, in `Felsökning.Ireland.MetÉireann`, we use `GetAsync<ForecastsForRegion>($"https://www.met.ie/Open_Data/json/{region}.json");` to return the data as the expected type, abstracting the need to do this manually (and repeat code) on the caller's end.

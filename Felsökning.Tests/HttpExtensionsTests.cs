@@ -4,9 +4,6 @@
 // </copyright>
 // <author>John Bailey</author>
 // ----------------------------------------------------------------------
-using System.Net.Http;
-using System.Net.Mime;
-
 namespace Felsökning.Tests
 {
     [ExcludeFromCodeCoverage]
