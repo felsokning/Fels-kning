@@ -26,7 +26,7 @@ namespace Felsökning
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             };
 
-            return JsonSerializer.Deserialize<T>(textResult, jsonSerializerOptions);
+            return JsonSerializer.Deserialize<T>(textResult!, jsonSerializerOptions!)!;
         }
     }
 }

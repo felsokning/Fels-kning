@@ -21,7 +21,7 @@ namespace Felsökning
             var httpClientHandler = new HttpClientHandler()
             {
                 //SslProtocols.Tls13
-                SslProtocols = SslProtocols.Tls12
+                SslProtocols = SslProtocols.Tls13
             };
 
             HttpClient = new HttpClient(httpClientHandler)
