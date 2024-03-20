@@ -19,10 +19,10 @@ namespace Felsökning
         public static bool IsWeekDay(this DateTime dateTime)
         {
             return dateTime.DayOfWeek == DayOfWeek.Monday
-                | dateTime.DayOfWeek == DayOfWeek.Tuesday
-                | dateTime.DayOfWeek == DayOfWeek.Wednesday
-                | dateTime.DayOfWeek == DayOfWeek.Thursday
-                | dateTime.DayOfWeek == DayOfWeek.Friday;
+                || dateTime.DayOfWeek == DayOfWeek.Tuesday
+                || dateTime.DayOfWeek == DayOfWeek.Wednesday
+                || dateTime.DayOfWeek == DayOfWeek.Thursday
+                || dateTime.DayOfWeek == DayOfWeek.Friday;
         }
 
         /// <summary>
@@ -81,19 +81,6 @@ namespace Felsökning
         {
             CultureInfo svSe = new CultureInfo(name: "sv-se");
             return dateTime.ToString(svSe);
-        }
-
-        /// <summary>
-        ///     Extends the <see cref="DateTime"/> object to return a Unix Epoch time structure.
-        /// </summary>
-        /// <param name="dateTime">The current <see cref="DateTime"/> object in question.</param>
-        /// <returns>A long representing the Unix Epoc time.</returns>
-        public static long ToUnixEpochTime(this DateTime dateTime)
-        {
-            DateTime whenDinosaursRoamedTheEarth = DateTime.UnixEpoch;
-            long currentDateTimeTicks = dateTime.Ticks;
-            long whenDinosaursRoamedTheEarthTicks = whenDinosaursRoamedTheEarth.Ticks;
-            return (currentDateTimeTicks - whenDinosaursRoamedTheEarthTicks) / 10000000;
         }
 
         /// <summary>

@@ -10,9 +10,11 @@ namespace Felsökning
     ///     Initializes a new instance of the <see cref="StatusException"/> class.
     /// </summary>
     /// <inheritdoc cref="Exception"/>
+#pragma warning disable S3925 // Superceded by SYSLIB0051 - See https://github.com/dotnet/docs/issues/34893
     [Serializable]
     public class StatusException : Exception
     {
+#pragma warning restore S3925
         /// <summary>
         ///     Gets or sets the <see cref="Felsökning.HttpRecord"/> value associated with the failure.
         /// </summary>

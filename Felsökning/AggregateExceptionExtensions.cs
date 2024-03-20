@@ -21,10 +21,8 @@ namespace Felsökning
         /// <returns>A string array of relevant data.</returns>
         public static string[] Unbox(this AggregateException aggregateException)
         {
-            using (AggregateInternals internals = new())
-            {
-                return internals.DelveInternally(exception: aggregateException);
-            }
+            using AggregateInternals internals = new();
+            return internals.DelveInternally(exception: aggregateException);
         }
     }
 }
