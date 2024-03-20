@@ -13,7 +13,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void IsWeekDay_ShouldReturn_True_Monday()
         {
-            var sut = new DateTime(1954, 11, 08);
+            var sut = new DateTime(1954, 11, 08, 00, 00, 00, DateTimeKind.Utc);
             var result = sut.IsWeekDay();
             result.Should().BeTrue();
         }
@@ -21,7 +21,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void IsWeekDay_ShouldReturn_True_Tuesday()
         {
-            var dateTime = new DateTime(2001, 09, 11);
+            var dateTime = new DateTime(2001, 09, 11, 00, 00, 00, DateTimeKind.Utc);
             var result = dateTime.IsWeekDay();
             result.Should().BeTrue();
         }
@@ -29,7 +29,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void IsWeekDay_ShouldReturn_True_Wednesday()
         {
-            var dateTime = new DateTime(1358, 12, 13);
+            var dateTime = new DateTime(1358, 12, 13, 00, 00, 00, DateTimeKind.Utc);
             var result = dateTime.IsWeekDay();
             result.Should().BeTrue();
         }
@@ -37,7 +37,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void IsWeekDay_ShouldReturn_True_Thursday()
         {
-            var dateTime = new DateTime(1776, 07, 04);
+            var dateTime = new DateTime(1776, 07, 04, 00, 00, 00, DateTimeKind.Utc);
             var result = dateTime.IsWeekDay();
             result.Should().BeTrue();
         }
@@ -45,7 +45,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void IsWeekDay_ShouldReturn_False_Saturday()
         {
-            var dateTime = new DateTime(1523, 06, 16);
+            var dateTime = new DateTime(1523, 06, 16, 00, 00, 00, DateTimeKind.Utc);
             var result = dateTime.IsWeekDay();
             result.Should().BeFalse();
         }
@@ -53,7 +53,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void ToCulturedString_ShouldReturn_ExpectedValue()
         {
-            var dateTime = new DateTime(2023, 01, 01);
+            var dateTime = new DateTime(2023, 01, 01, 00, 00, 00, DateTimeKind.Utc);
             var result = dateTime.ToCulturedString("sv-se");
             result.Should().NotBeNullOrWhiteSpace();
             result.Should().Be("2023-01-01 00:00:00");
@@ -62,7 +62,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void ToIso8601UtcString_ShouldReturn_ExpectedValue()
         {
-            var dateTime = new DateTime(1986, 01, 28, 16, 39, 13);
+            var dateTime = new DateTime(1986, 01, 28, 16, 39, 13, DateTimeKind.Utc);
             var result = dateTime.ToIso8601UtcString();
             result.Should().NotBeNullOrWhiteSpace();
             result.Should().Be("1986-01-28T16:39:13.0000000Z");
@@ -71,7 +71,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void ToPosixTime_ShouldReturn_ExpectedValue()
         {
-            var dateTime = new DateTime(1975, 01, 28, 16, 39, 13);
+            var dateTime = new DateTime(1975, 01, 28, 16, 39, 13, DateTimeKind.Utc);
             var result = dateTime.ToPosixTime();
             result.Should().BeGreaterThan(0);
             result.Should().Be(160159153);
@@ -80,7 +80,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void ToRfc1123String_ShouldReturn_ExpectedValue()
         {
-            var dateTime = new DateTime(2022, 08, 29, 10, 01, 13);
+            var dateTime = new DateTime(2022, 08, 29, 10, 01, 13, DateTimeKind.Utc);
 
             var result = dateTime.ToRfc1123String();
 
@@ -91,7 +91,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void ToSwedishString_ShouldReturn_ExpectedValue()
         {
-            var dateTime = new DateTime(1995, 12, 24, 23, 59, 59);
+            var dateTime = new DateTime(1995, 12, 24, 23, 59, 59, DateTimeKind.Utc);
 
             var result = dateTime.ToSwedishString();
 
@@ -102,9 +102,9 @@ namespace Felsökning.Tests
         [TestMethod]
         public void ToUnixEpochTime_ShouldReturn_ExpectedValue()
         {
-            var dateTime = new DateTime(2026, 02, 17, 10, 00, 00);
+            var dateTime = new DateTime(2026, 02, 17, 10, 00, 00, DateTimeKind.Utc);
 
-            var result = dateTime.ToUnixEpochTime();
+            var result = dateTime.ToPosixTime();
 
             result.Should().BeGreaterThan(0);
             result.Should().Be(1771322400);
@@ -113,7 +113,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void ToWeekNumber_ShouldReturn_ExpectedValue()
         {
-            var dateTime = new DateTime(2005, 06, 06);
+            var dateTime = new DateTime(2005, 06, 06, 00, 00, 00, DateTimeKind.Utc);
 
             var result = dateTime.ToWeekNumber();
 
@@ -124,17 +124,17 @@ namespace Felsökning.Tests
         [TestMethod]
         public void ValidateVeckan1990()
         {
-            var dateTime = new DateTime(1990, 10, 10);
+            var dateTime = new DateTime(1990, 10, 10, 00, 00, 00, DateTimeKind.Utc);
             var weekNumber = dateTime.ToWeekNumber();
             Assert.IsNotNull(weekNumber);
             Assert.IsFalse(weekNumber == 0);
-            Assert.AreEqual(weekNumber, 41);
+            Assert.AreEqual(41, weekNumber);
         }
 
         [TestMethod]
         public void ValidateSwedishStringIsLocalised()
         {
-            DateTime dateTime = new DateTime(2019, 01, 01);
+            DateTime dateTime = new DateTime(2019, 01, 01, 00, 00, 00, DateTimeKind.Utc);
             string dateTimeString = dateTime.ToSwedishString();
             Assert.IsTrue(Regex.IsMatch(dateTimeString, @"^[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-6][0-9]:[0-5][0-9]$"));
         }
@@ -145,7 +145,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void ValidateFirstCulturedDateString()
         {
-            DateTime now = new DateTime(1990, 12, 25, 14, 30, 55);
+            DateTime now = new DateTime(1990, 12, 25, 14, 30, 55, DateTimeKind.Utc);
             string culturedString = now.ToCulturedString("cs-CZ");
             Assert.IsTrue(Regex.IsMatch(culturedString, @"^[0-9][0-9].[0-1][0-9].[1-2][0-9][0-9][0-9] [0-2][0-9]:[0-6][0-9]:[0-5][0-9]$"));
         }
@@ -156,7 +156,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void ValidateThirdCulturedDateString()
         {
-            DateTime now = new DateTime(1990, 12, 25, 14, 30, 55);
+            DateTime now = new DateTime(1990, 12, 25, 14, 30, 55, DateTimeKind.Utc);
             string culturedString = now.ToCulturedString("pt-BR");
             Assert.IsTrue(Regex.IsMatch(culturedString, @"^[0-9][0-9]/[0-1][0-9]/[1-2][0-9][0-9][0-9] [0-2][0-9]:[0-6][0-9]:[0-5][0-9]$"));
         }
