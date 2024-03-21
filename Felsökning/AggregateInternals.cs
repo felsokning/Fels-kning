@@ -78,12 +78,9 @@ namespace Felsökning
         /// <param name="exception">The exception to be unboxed.</param>
         private void InternalUnbox(Exception exception)
         {
-            if (exception.HResult != 0)
+            if (exception.HResult != 0 && !this.HResults.Exists(r => r == exception.HResult.ToString()))
             {
-                if (!this.HResults.Exists(r => r == exception.HResult.ToString()))
-                {
-                    this.HResults.Add(exception.HResult.ToString());
-                }
+                this.HResults.Add(exception.HResult.ToString());
             }
 
             if (!string.IsNullOrWhiteSpace(exception.StackTrace))
