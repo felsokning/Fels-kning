@@ -96,11 +96,9 @@ namespace Felsökning.Tests
         {
             var sut = "This should fail";
 
-            var exception = Assert.ThrowsException<ArgumentException>(() => sut.IsValidSwedishPersonNummer());
+            var result = sut.IsValidSwedishPersonNummer();
 
-            exception.Should().BeOfType<ArgumentException>();
-            exception.Message.Should().NotBeNullOrWhiteSpace();
-            exception.Message.Should().Be("String is incorrect size: 16");
+            result.Should().BeFalse();
         }
 
         [TestMethod]
@@ -108,11 +106,9 @@ namespace Felsökning.Tests
         {
             var sut = "aaaaaaaaaa";
 
-            var exception = Assert.ThrowsException<ArgumentException>(() => sut.IsValidSwedishPersonNummer());
+            var result = sut.IsValidSwedishPersonNummer();
 
-            exception.Should().BeOfType<ArgumentException>();
-            exception.Message.Should().NotBeNullOrWhiteSpace();
-            exception.Message.Should().Be("Unable to parse 'aaaaaaaaaa' to long.");
+            result.Should().BeFalse();
         }
 
         [TestMethod]
