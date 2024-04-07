@@ -16,13 +16,13 @@ namespace Felsökning
         ///     The <see cref="Path"/> property is used to statically store the path to file for use 
         ///     throughout the class' lifetime.
         /// </summary>
-        private static string Path { get; set;  } = string.Empty;
+        private string Path { get; set;  } = string.Empty;
 
         /// <summary>
         ///     The <see cref="IsEncrypted"/> property is used to signify if we should bother with decrypting
         ///     the file before opening it.
         /// </summary>
-        private static bool IsEncrypted { get; set; }
+        private bool IsEncrypted { get; set; }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="EncryptedFile"/> class, which is used to ensure

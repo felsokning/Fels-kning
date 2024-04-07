@@ -4,6 +4,8 @@
 // </copyright>
 // <author>John Bailey</author>
 // ----------------------------------------------------------------------
+using System.ComponentModel;
+
 namespace Felsökning
 {
     /// <summary>

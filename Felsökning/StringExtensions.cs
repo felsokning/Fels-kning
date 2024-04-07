@@ -49,7 +49,7 @@ namespace Felsökning
 
             List<string> returns = new List<string>(0);
 
-            using (Dictionaries dictionaries = new Dictionaries())
+            using (Dictionaries dictionaries = new())
             {
                 string cityCodeString = value.Substring(startIndex: 0, length: 2);
                 string utdelningsformString = value.Substring(startIndex: 3, length: 1);
@@ -77,8 +77,12 @@ namespace Felsökning
                 throw new ArgumentNullException(nameof(value));
             }
 
-            bool isSizedTen = false;
-            bool isSizedTwelve = false;
+            // At least one format MUST be validated as being true to continue.
+            if (!Regex.IsMatch(value, @"^\d{8}[-,+]?\d{4}$", RegexOptions.None, TimeSpan.FromSeconds(1))
+                && !Regex.IsMatch(value, @"^\d{6}[-,+]?\d{4}$", RegexOptions.None, TimeSpan.FromSeconds(1)))
+            {
+                return false;
+            }
 
             // Two Year: YYMMDD-SSSC
             bool minusCharTwoDigitYear = value[6] == '-';
@@ -91,128 +95,54 @@ namespace Felsökning
             if (minusCharTwoDigitYear || plusCharTwoDigitYear || minusCharFourDigitYear || plusCharFourDigitYear)
             {
                 // Clean-up before next step
-                if (value.Contains(value: "-"))
+                if (value.Contains('-'))
                 {
                     string pattern = "-";
                     value = Regex.Replace(input: value, pattern: pattern, replacement: string.Empty);
                 }
 
-                if (value.Contains(value: "+"))
+                if (value.Contains('+'))
                 {
                     string pattern = "\\+";
                     value = Regex.Replace(input: value, pattern: pattern, replacement: string.Empty);
                 }
             }
 
-            if (value.Length == 10)
-            {
-                isSizedTen = true;
-            }
-
             if (value.Length == 12)
             {
-                isSizedTwelve = true;
+                value = value.Substring(2, 10);
             }
-
-            if (!isSizedTen && !isSizedTwelve)
-            {
-                throw new ArgumentException($"String is incorrect size: {value.Length}");
-            }
-
-            // Validate after clean-up that we have numbers.
-            if (!long.TryParse(s: value, result: out _))
-            {
-                throw new ArgumentException($"Unable to parse '{value}' to long.");
-            }
-
-            int first = 0;
-            int second = 0;
-            int third = 0;
-            int fourth = 0;
-            int fifth = 0;
-            int sixth = 0;
-            int seventh = 0;
-            int eighth = 0;
-            int ninth = 0;
-            int tenth = 0;
 
             // Luhn Algorithm Magics - See: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2773709/figure/Fig1/
-            if (isSizedTen)
-            {
-                first = int.Parse(value.Substring(startIndex: 0, length: 1));       // Year
-                second = int.Parse(value.Substring(startIndex: 1, length: 1));      // Year
-                third = int.Parse(value.Substring(startIndex: 2, length: 1));       // Month
-                fourth = int.Parse(value.Substring(startIndex: 3, length: 1));      // Month
-                fifth = int.Parse(value.Substring(startIndex: 4, length: 1));       // Day
-                sixth = int.Parse(value.Substring(startIndex: 5, length: 1));       // Day
-                seventh = int.Parse(value.Substring(startIndex: 6, length: 1));     // Serial
-                eighth = int.Parse(value.Substring(startIndex: 7, length: 1));      // Serial
-                ninth = int.Parse(value.Substring(startIndex: 8, length: 1));       // Sex
-                tenth = int.Parse(value.Substring(startIndex: 9, length: 1));       // Checksum
-            }
-            else if (isSizedTwelve)
-            {
-                first = int.Parse(value.Substring(startIndex: 2, length: 1));       // Year
-                second = int.Parse(value.Substring(startIndex: 3, length: 1));      // Year
-                third = int.Parse(value.Substring(startIndex: 4, length: 1));       // Month
-                fourth = int.Parse(value.Substring(startIndex: 5, length: 1));      // Month
-                fifth = int.Parse(value.Substring(startIndex: 6, length: 1));       // Day
-                sixth = int.Parse(value.Substring(startIndex: 7, length: 1));       // Day
-                seventh = int.Parse(value.Substring(startIndex: 8, length: 1));     // Serial
-                eighth = int.Parse(value.Substring(startIndex: 9, length: 1));      // Serial
-                ninth = int.Parse(value.Substring(startIndex: 10, length: 1));      // Sex
-                tenth = int.Parse(value.Substring(startIndex: 11, length: 1));      // Checksum
-            }
+            int first = int.Parse(value.Substring(startIndex: 0, length: 1));
+            int second = int.Parse(value.Substring(startIndex: 1, length: 1));
+            int third = int.Parse(value.Substring(startIndex: 2, length: 1));
+            int fourth = int.Parse(value.Substring(startIndex: 3, length: 1));
+            int fifth = int.Parse(value.Substring(startIndex: 4, length: 1));
+            int sixth = int.Parse(value.Substring(startIndex: 5, length: 1));
+            int seventh = int.Parse(value.Substring(startIndex: 6, length: 1));
+            int eighth = int.Parse(value.Substring(startIndex: 7, length: 1));
+            int ninth = int.Parse(value.Substring(startIndex: 8, length: 1));
+            int providedCheckSum = int.Parse(value.Substring(startIndex: 9, length: 1));
 
-            int firstProduct = first * 2;
-            int secondProduct = second * 1;
-            int thirdProduct = third * 2;
-            int fourthProduct = fourth * 1;
-            int fifthProduct = fifth * 2;
-            int sixthProduct = sixth * 1;
-            int seventhProduct = seventh * 2;
-            int eighthProduct = eighth * 1;
-            int ninthProduct = ninth * 2;
-
-            if (firstProduct > 9)
-            {
-                firstProduct = ReduceGreaterThanNine(product: firstProduct);
-            }
-
-            if (thirdProduct > 9)
-            {
-                thirdProduct = ReduceGreaterThanNine(product: thirdProduct);
-            }
-
-            if (fifthProduct > 9)
-            {
-                fifthProduct = ReduceGreaterThanNine(product: fifthProduct);
-            }
-
-            if (seventhProduct > 9)
-            {
-                seventhProduct = ReduceGreaterThanNine(product: seventhProduct);
-            }
-
-            if (ninthProduct > 9)
-            {
-                ninthProduct = ReduceGreaterThanNine(product: ninthProduct);
-            }
-
-            int sumTotal = firstProduct + secondProduct + thirdProduct + fourthProduct + fifthProduct + sixthProduct + seventhProduct + eighthProduct + ninthProduct;
+            int sumTotal = ReduceGreaterThanNine(first * 2) + second + ReduceGreaterThanNine(third * 2) + fourth + ReduceGreaterThanNine(fifth * 2) + sixth + ReduceGreaterThanNine(seventh * 2) + eighth + ReduceGreaterThanNine(ninth * 2);
             string sumTotalString = sumTotal.ToString();
             int sumTotalStringLength = sumTotalString.Length;
             string lastdigit = sumTotalString.Substring(startIndex: sumTotalStringLength - 1, length: 1);
             int lastActualDigit = int.Parse(s: lastdigit);
-            int checksum = 0;
+            int arrivedAtChecksum = 0;
 
             // Ten minus zero is ten and, so, the last digit would be zero, anyways.
             if (lastActualDigit != 0)
             {
-                checksum = 10 - lastActualDigit;
+                arrivedAtChecksum = 10 - lastActualDigit;
             }
 
-            return tenth == checksum;
+            // Perform modulo check as fallback.
+            int moduloSum = sumTotal + providedCheckSum;
+            int moduloCheck = moduloSum % 10;
+
+            return providedCheckSum == arrivedAtChecksum && moduloCheck == 0;
         }
 
         /// <summary>
@@ -297,7 +227,7 @@ namespace Felsökning
                 return returnInt;
             }
 
-            throw new ArgumentException($"The product {product} was not greater than nine and, thus, did not need to be processed by this method.");
+            return product;
         }
     }
 }
