@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="Http1JsonClient.cs" company="Felsökning">
+// <copyright file="HttpBase.cs" company="Felsökning">
 //      Copyright © Felsökning. All rights reserved.
 // </copyright>
 // <author>John Bailey</author>
@@ -9,6 +9,7 @@ namespace Felsökning
     /// <summary>
     ///     Initializes a new instance of the <see cref="HttpBase"/> class.
     /// </summary>
+    /// <inheret doc="IDisposable" />
     public class HttpBase : IDisposable
     {
         /// <summary>

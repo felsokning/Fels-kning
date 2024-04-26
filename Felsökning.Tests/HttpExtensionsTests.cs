@@ -21,6 +21,21 @@ namespace Felsökning.Tests
         }
 
         [TestMethod]
+        public void ValidateHeadersAdded()
+        {
+            var headerDictionary = new Dictionary<string, string>
+            {
+                { "Test", "testing" },
+            };
+
+            HttpClient client = new();
+            client.AddHeaders(headerDictionary);
+            Assert.IsTrue(client.DefaultRequestHeaders.Contains("Test"));
+            Assert.IsFalse(string.IsNullOrWhiteSpace(client.DefaultRequestHeaders.GetValues("Test").FirstOrDefault()));
+            Assert.IsTrue(client.DefaultRequestHeaders.GetValues("Test")?.FirstOrDefault()?.Equals("testing"));
+        }
+
+        [TestMethod]
         public void ValidateRequestIdGenerated()
         {
             HttpClient client = new();
