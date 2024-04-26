@@ -28,6 +28,24 @@ namespace Felsökning
         }
 
         /// <summary>
+        ///     Adds the given headers to the <see cref="HttpClient"/>.
+        ///     <para>WARNING: The existing header of the same name will be removed, if it exists.</para>
+        /// </summary>
+        /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
+        /// <param name="headers">A <see cref="IDictionary"/> of headers to add.</param>
+        public static void AddHeaders(this HttpClient httpClient, IDictionary<string, string> headers)
+        {
+            if (headers.Count > 0)
+            {
+                foreach(var header in headers)
+                {
+                    httpClient.RemoveHeader(header.Key);
+                    httpClient.DefaultRequestHeaders.Add(header.Key, header.Value);
+                }
+            }
+        }
+
+        /// <summary>
         ///     Adds the given request id to the <see cref="HttpClient"/>.
         ///     <para>WARNING: The existing header of the same name will be removed, if it exists.</para>
         /// </summary>

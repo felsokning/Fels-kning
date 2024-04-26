@@ -10,7 +10,7 @@
     <Authors>John Bailey</Authors>
     <Company>Felsökning</Company>
     <Description>The base library used by other Felsökning NuGet libraries.</Description>
-    <Copyright>Copyright © 2023 Felsökning</Copyright>
+    <Copyright>Copyright © 2024 Felsökning</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/felsokning/Fels-kning</PackageProjectUrl>
     <PackageIconUrl />
@@ -26,6 +26,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.IO.Abstractions" Version="20.0.15" />
+    <PackageReference Include="System.IO.Abstractions" Version="21.0.2" />
   </ItemGroup>
 </Project>
