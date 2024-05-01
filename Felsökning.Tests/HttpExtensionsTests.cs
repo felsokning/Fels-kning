@@ -87,6 +87,28 @@ namespace Felsökning.Tests
         }
 
         [TestMethod]
+        public async Task GetTypeAsync_Succeeds()
+        {
+            HttpClient client = new(new TestingHttpMessageHandler());
+            var typeHttpResponse = await client.GetTypeAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1");
+            Assert.IsNotNull(typeHttpResponse);
+            Assert.IsNotNull(typeHttpResponse.Headers);
+            Assert.IsNotNull(typeHttpResponse.Result);
+
+            var headers = typeHttpResponse.Headers;
+            headers.Should().NotBeNull();
+            headers.Should().BeOfType<HttpResponseHeaders>();
+
+            var result = typeHttpResponse.Result;
+            result.Should().BeOfType<SampleJson>();
+            
+            result.Completed.Should().BeTrue();
+            result.Id.Should().NotBe(0);
+            result.Title.Should().NotBeNullOrWhiteSpace();
+            result.UserId.Should().NotBe(0);
+        }
+
+        [TestMethod]
         public async Task GetDeserializedTypeData_Throws_StatusException()
         {
             HttpClient client = new(new TestingHttpMessageHandler());

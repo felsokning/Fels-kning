@@ -4,8 +4,6 @@
 // </copyright>
 // <author>John Bailey</author>
 // ----------------------------------------------------------------------
-using System.ComponentModel;
-
 namespace Felsökning
 {
     /// <summary>
@@ -32,7 +30,7 @@ namespace Felsökning
         ///     <para>WARNING: The existing header of the same name will be removed, if it exists.</para>
         /// </summary>
         /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
-        /// <param name="headers">A <see cref="IDictionary"/> of headers to add.</param>
+        /// <param name="headers">A <see cref="IDictionary{string, string}"/> of headers to add.</param>
         public static void AddHeaders(this HttpClient httpClient, IDictionary<string, string> headers)
         {
             if (headers.Count > 0)
@@ -85,10 +83,81 @@ namespace Felsökning
                 string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
-                    JsonSerializerOptions options = new JsonSerializerOptions();
+                    var options = new JsonSerializerOptions();
                     options.Converters.Add(new JsonStringEnumConverter());
                     options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                     return JsonSerializer.Deserialize<T>(httpResponseMessageContent, options)!;
+                }
+                else
+                {
+                    var httpRecord = new HttpRecord
+                    {
+                        Url = requestUrl,
+                        RequestId = requestId,
+                        Method = HttpMethod.Get.Method,
+                        StatusCode = httpResponseMessage.StatusCode.ToString(),
+                        Content = httpResponseMessageContent,
+                    };
+
+                    throw new StatusException(httpResponseMessage.StatusCode.ToString(), httpResponseMessageContent, httpRecord);
+                }
+            }
+            catch (HttpRequestException thrownException)
+            {
+                HttpRecord? httpRecord;
+                if (thrownException.StatusCode == null)
+                {
+                    httpRecord = new HttpRecord
+                    {
+                        Url = requestUrl,
+                        RequestId = requestId,
+                        Method = HttpMethod.Get.Method,
+                        StatusCode = string.Empty,
+                        Content = thrownException.Message,
+                    };
+                }
+                else
+                {
+                    httpRecord = new HttpRecord
+                    {
+                        Url = requestUrl,
+                        RequestId = requestId,
+                        Method = HttpMethod.Get.Method,
+                        StatusCode = thrownException.StatusCode!.ToString()!,
+                        Content = thrownException.Message,
+                    };
+                }
+
+                throw new StatusException($"{thrownException.StatusCode} - {thrownException.Message} from '{requestUrl}'", thrownException, httpRecord);
+            }
+        }
+
+        /// <summary>
+        ///     Obtains the HTTP response from the given URL and deserializes it into the given object of <typeparamref name="T"/>.
+        ///     <para>We only check for successful HTTP responses. Any continuations must be handled by the caller.</para>
+        /// </summary>
+        /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
+        /// <param name="requestUrl">The web url to do the request from.</param>
+        /// <returns>An awaitable <see cref="TypeHttpResponse{T}"/> of <typeparamref name="T"/></returns>
+        public static async Task<TypeHttpResponse<T>> GetTypeAsync<T>(this HttpClient httpClient, string requestUrl)
+        {
+            var requestId = string.Empty;
+            try
+            {
+                requestId = httpClient.GenerateNewRequestId();
+                HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(requestUrl);
+                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                if (httpResponseMessage.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions();
+                    options.Converters.Add(new JsonStringEnumConverter());
+                    options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    T returnType = JsonSerializer.Deserialize<T>(httpResponseMessageContent, options)!;
+                    return new TypeHttpResponse<T> 
+                    {
+                        Headers = httpResponseMessage.Headers,
+                        Result = returnType,
+                    };
                 }
                 else
                 {

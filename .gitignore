@@ -6,6 +6,9 @@
 # VSCode
 .vscode/
 
+# Mono
+.mono
+
 # User-specific files
 *.rsuser
 *.suo
