@@ -32,7 +32,7 @@ namespace Felsökning
         ///     <para>WARNING: The existing header of the same name will be removed, if it exists.</para>
         /// </summary>
         /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
-        /// <param name="headers">A <see cref="IDictionary"/> of headers to add.</param>
+        /// <param name="headers">A <see cref="T:Dictionary{string, string}"/> of headers to add.</param>
         public static void AddHeaders(this HttpClient httpClient, IDictionary<string, string> headers)
         {
             if (headers.Count > 0)

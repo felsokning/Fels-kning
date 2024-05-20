@@ -70,5 +70,23 @@ namespace Felsökning
                 yield return action(enumerator.Current);
             }
         }
+
+        /// <summary>
+        ///     Asynchronously filters a sequence of values based on a predicate.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements of source.</typeparam>
+        /// <param name="source">An <see cref="IEnumerable{T}"/> to filter.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>An <see cref="IAsyncEnumerable{T}"/> that contains elements from the input sequence that satisfy the condition.</returns>
+        public static async IAsyncEnumerable<TSource> WhereAsync<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, bool> predicate)
+        {
+            await foreach(var item in source)
+            {
+                if (predicate(item))
+                {
+                    yield return item;
+                }
+            }
+        }
     }
 }

@@ -95,5 +95,24 @@ namespace Felsökning.Tests
 
             await enumerator.MoveNextAsync();
         }
+
+        [TestMethod]
+        public void IAsyncEnumerable_Where_Succeeds()
+        {
+            var list = new List<string> { "testing", "something", "here" };
+
+            var negativeResult = list.ToIAsyncEnumerable().WhereAsync(x => x == "Test");
+            negativeResult.Should().NotBeNull();
+
+            var negativeEnumerable = negativeResult.ToBlockingEnumerable();
+            negativeEnumerable.Count().Should().Be(0);
+
+            var positiveResult = list.ToIAsyncEnumerable().WhereAsync(x => x == "testing");
+            positiveResult.Should().NotBeNull();
+            
+            var positiveEnumerable = positiveResult.ToBlockingEnumerable();
+            positiveEnumerable.Count().Should().Be(1);
+            positiveEnumerable.First().Should().Be("testing");
+        }
     }
 }
