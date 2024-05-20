@@ -17,6 +17,9 @@
 *.userprefs
 
 # Mono auto generated files
+.mono
+.mono/
+.mono/*
 mono_crash.*
 
 # Build results

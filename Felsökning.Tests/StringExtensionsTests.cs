@@ -4,8 +4,6 @@
 // </copyright>
 // <author>John Bailey</author>
 // ----------------------------------------------------------------------
-using Xunit;
-
 namespace Felsökning.Tests
 {
     [ExcludeFromCodeCoverage]
