@@ -19,9 +19,4 @@ global using System.Text.Json;
 global using System.Text.Json.Serialization;
 global using System.Text.RegularExpressions;
 
-
-global using Microsoft.Data.Sqlite;
-global using Microsoft.EntityFrameworkCore;
-global using Microsoft.EntityFrameworkCore.Sqlite;
-
 global using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
