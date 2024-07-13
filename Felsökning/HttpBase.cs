@@ -21,8 +21,9 @@ namespace Felsökning
         {
             var httpClientHandler = new HttpClientHandler()
             {
-                //SslProtocols.Tls13
-                SslProtocols = SslProtocols.Tls13
+                // Met Éireann and Ireland West currently don't support TLS 1.3,
+                // which should make them feel bad - because it gives me a sad. :(
+                SslProtocols = SslProtocols.Tls13 | SslProtocols.Tls12
             };
 
             HttpClient = new HttpClient(httpClientHandler)
