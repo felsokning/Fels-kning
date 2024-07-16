@@ -16,14 +16,15 @@ namespace Felsökning
         ///     Initializes a new instance of the <see cref="HttpBase"/> class.
         /// </summary>
         /// <param name="httpVersion">The <see cref="HttpVersion"/> the <see cref="System.Net.Http.HttpClient"/> should used.</param>
-        /// <param name="productInfoString">The <see cref="System.Runtime.InteropServices.OptionalAttribute"/> assembly reference/name to include in the header.</param>
+        /// <param name="productInfoString">The <see cref="OptionalAttribute"/> assembly reference/name to include in the header.</param>
+        [MethodImplAttribute(MethodImplOptions.NoInlining)]
         public HttpBase(Version httpVersion, [Optional] string productInfoString)
         {
             var httpClientHandler = new HttpClientHandler()
             {
                 // Met Éireann and Ireland West currently don't support TLS 1.3,
                 // which should make them feel bad - because it gives me a sad. :(
-                SslProtocols = SslProtocols.Tls13 | SslProtocols.Tls12
+                SslProtocols = SslProtocols.Tls13 | SslProtocols.Tls12,
             };
 
             HttpClient = new HttpClient(httpClientHandler)
@@ -38,7 +39,11 @@ namespace Felsökning
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             if (!string.IsNullOrEmpty(productInfoString)) 
             {
-                HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(Uri.EscapeDataString(productInfoString), "1.0.0"));
+                var callingAssemblyVersion = Assembly.GetCallingAssembly().GetName().Version;
+                if (callingAssemblyVersion != null)
+                {
+                    HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(Uri.EscapeDataString(productInfoString), callingAssemblyVersion.ToString()));
+                }
             }
 
             HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Contact", Uri.EscapeDataString("nuget@felsokning.se")));
