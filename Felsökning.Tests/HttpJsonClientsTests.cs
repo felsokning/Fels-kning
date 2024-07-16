@@ -39,13 +39,13 @@ namespace Felsökning.Tests
             var http2UserAgents = httpBaseVerion2.HttpClient.DefaultRequestHeaders.UserAgent;
             var http3UserAgents = httpBaseVerion3.HttpClient.DefaultRequestHeaders.UserAgent;
 
-            http1UserAgents.FirstOrDefault(x => x.Product!.Name.Contains("Science"))!.Product!.Version.Should().Contain("1.0.0");
+            http1UserAgents.FirstOrDefault(x => x.Product!.Name.Contains("Science"))!.Product!.Version.Should().Contain("18.43.7.0");
             http1UserAgents.FirstOrDefault(x => x.Product!.Name.Contains("Contact"))!.Product!.Version.Should().Contain("nuget%40felsokning.se");
             http1UserAgents.FirstOrDefault(x => x.Product!.Name.Contains("Website"))!.Product!.Version.Should().Contain("https%3A%2F%2Fwww.nuget.org%2Fprofiles%2Ffelsokning");
-            http2UserAgents.FirstOrDefault(x => x.Product!.Name.Contains("Science"))!.Product!.Version.Should().Contain("1.0.0");
+            http2UserAgents.FirstOrDefault(x => x.Product!.Name.Contains("Science"))!.Product!.Version.Should().Contain("18.43.7.0");
             http2UserAgents.FirstOrDefault(x => x.Product!.Name.Contains("Contact"))!.Product!.Version.Should().Contain("nuget%40felsokning.se");
             http2UserAgents.FirstOrDefault(x => x.Product!.Name.Contains("Website"))!.Product!.Version.Should().Contain("https%3A%2F%2Fwww.nuget.org%2Fprofiles%2Ffelsokning");
-            http3UserAgents.FirstOrDefault(x => x.Product!.Name.Contains("Science"))!.Product!.Version.Should().Contain("1.0.0");
+            http3UserAgents.FirstOrDefault(x => x.Product!.Name.Contains("Science"))!.Product!.Version.Should().Contain("18.43.7.0");
             http3UserAgents.FirstOrDefault(x => x.Product!.Name.Contains("Contact"))!.Product!.Version.Should().Contain("nuget%40felsokning.se");
             http3UserAgents.FirstOrDefault(x => x.Product!.Name.Contains("Website"))!.Product!.Version.Should().Contain("https%3A%2F%2Fwww.nuget.org%2Fprofiles%2Ffelsokning");
 
