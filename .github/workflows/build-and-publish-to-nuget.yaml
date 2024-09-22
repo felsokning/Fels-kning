@@ -16,7 +16,7 @@ jobs:
       - name: .NET Restore
         run: dotnet restore --verbosity=normal
       - name: .NET Build
-        run: dotnet build --no-restore --verbosity=normal
+        run: dotnet build --no-restore --verbosity=normal /p:Version=${{ github.event.release.tag_name }}
       - name: .NET Test
         run: dotnet test --no-restore --no-build --verbosity=normal --collect:"XPlat Code Coverage" --logger:trx --results-directory coverage
       - name: Copy Coverage To Predictable Location

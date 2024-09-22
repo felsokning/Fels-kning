@@ -14,6 +14,68 @@ namespace Felsökning.Tests
         [DataRow("")]
         [DataRow(" ")]
         [DataRow(null)]
+        public void IsLower_ShouldFailForNullEmptyOrWhitespace(string sut)
+        {
+            var exception = Assert.ThrowsException<ArgumentNullException>(() => sut.IsLower());
+
+            exception.Should().BeOfType<ArgumentNullException>();
+            exception.Message.Should().Be("Value cannot be null. (Parameter 'value')");
+        }
+
+        [TestMethod]
+        public void IsLower_ShouldSucceed()
+        {
+            var firstSut = "tEsTiNg";
+
+            var firstResult = firstSut.IsLower();
+            firstResult.Should().BeFalse();
+
+            var secondSut = "testing";
+
+            var secondResult = secondSut.IsLower();
+            secondResult.Should().BeTrue();
+        }
+
+        [DataTestMethod]
+        [DataRow("")]
+        [DataRow(" ")]
+        [DataRow(null)]
+        public void IsUpper_ShouldFailForNullEmptyOrWhitespace(string sut)
+        {
+            var exception = Assert.ThrowsException<ArgumentNullException>(() => sut.IsUpper());
+
+            exception.Should().BeOfType<ArgumentNullException>();
+            exception.Message.Should().Be("Value cannot be null. (Parameter 'value')");
+        }
+
+        [TestMethod]
+        public void IsUpper_ShouldSucceed()
+        {
+            var firstSut = "TESTING";
+
+            var firstResult = firstSut.IsUpper();
+            firstResult.Should().BeTrue();
+
+            var secondSut = "testing";
+
+            var secondResult = secondSut.IsUpper();
+            secondResult.Should().BeFalse();
+
+            var thirdSut = "teSTing";
+
+            var thirdResult = thirdSut.IsUpper();
+            thirdResult.Should().BeFalse();
+
+            var fourthSut = "TEsting";
+
+            var fourthResult = fourthSut.IsUpper();
+            fourthResult.Should().BeFalse();
+        }
+
+        [DataTestMethod]
+        [DataRow("")]
+        [DataRow(" ")]
+        [DataRow(null)]
         public void GetPostnummerDetails_ShouldFailForNullOrEmpty(string sut)
         {
             var exception = Assert.ThrowsException<ArgumentNullException>(() => sut.GetPostnummerDetails());
