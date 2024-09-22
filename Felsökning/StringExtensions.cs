@@ -66,6 +66,68 @@ namespace Felsökning
         }
 
         /// <summary>
+        ///     Extends the <see cref="string"/> class to include validation if the given string is all upper case.
+        /// </summary>
+        /// <param name="value">The current string context.</param>
+        /// <returns>A <see cref="bool"/> indicating if the entire word is upper case.</returns>
+        public static bool IsUpper(this string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            bool isAllUpper = false;
+            foreach (var character in value)
+            {
+                var textInfo = CultureInfo.InvariantCulture.TextInfo;
+                var resultCharacter = textInfo.ToUpper(character);
+                if (character == resultCharacter)
+                {
+                    isAllUpper = true;
+                }
+                else
+                {
+                    isAllUpper = false;
+                    break;
+                }
+            }
+
+            return isAllUpper;
+        }
+
+        /// <summary>
+        ///     Extends the <see cref="string"/> class to include validation if the given string is all lower case.
+        /// </summary>
+        /// <param name="value">The current string context.</param>
+        /// <returns>A <see cref="bool"/> indicating if the entire word is lower case.</returns>
+        public static bool IsLower(this string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            bool isAllLower = false;
+            foreach (var character in value)
+            {
+                var textInfo = CultureInfo.InvariantCulture.TextInfo;
+                var resultCharacter = textInfo.ToLower(character);
+                if (character == resultCharacter)
+                {
+                    isAllLower = true;
+                }
+                else
+                {
+                    isAllLower = false;
+                    break;
+                }
+            }
+
+            return isAllLower;
+        }
+
+        /// <summary>
         ///     Extends the <see cref="string"/> class to include validation if the given string is a valid Swedish personnummer via the Luhn Algorithm.
         /// </summary>
         /// <param name="value">The current string value context.</param>
