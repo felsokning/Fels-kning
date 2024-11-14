@@ -4,8 +4,6 @@
 // </copyright>
 // <author>John Bailey</author>
 // ----------------------------------------------------------------------
-using System.ComponentModel;
-
 namespace Felsökning
 {
     /// <summary>
@@ -75,7 +73,7 @@ namespace Felsökning
         /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
         /// <param name="requestUrl">The web url to do the request from.</param>
         /// <returns>An awaitable <see cref="Task{T}"/> of <typeparamref name="T"/></returns>
-        public static async Task<T> GetAsync<T>(this HttpClient httpClient, string requestUrl )
+        public static async Task<T> GetAsync<T>(this HttpClient httpClient, string requestUrl)
         {
             var requestId = string.Empty;
             try
