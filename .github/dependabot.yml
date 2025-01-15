@@ -8,6 +8,7 @@ updates:
     schedule: 
       interval: daily
     groups:
-      system_io_abstractions:
+      all:
+        applies-to: version-updates
         patterns:
-          - "System.IO.Abstractions*"
+          - "*"
