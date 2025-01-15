@@ -7,3 +7,7 @@ updates:
     # Check the nuget registry for updates every day (weekdays) 
     schedule: 
       interval: daily
+    groups:
+      system_io_abstractions:
+        patterns:
+          - "System.IO.Abstractions*"
