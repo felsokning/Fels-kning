@@ -10,7 +10,7 @@
     <Authors>John Bailey</Authors>
     <Company>Felsökning</Company>
     <Description>The base library used by other Felsökning NuGet libraries.</Description>
-    <Copyright>Copyright © 2024 Felsökning</Copyright>
+    <Copyright>Copyright © 2025 Felsökning</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/felsokning/Fels-kning</PackageProjectUrl>
     <PackageIconUrl />
