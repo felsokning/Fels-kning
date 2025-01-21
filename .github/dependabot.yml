@@ -8,6 +8,11 @@ updates:
     schedule: 
       interval: daily
     groups:
+      fluent_assertions:
+        patterns:
+          - "*FluentAssertions*"
+        ignore:
+          update-types: version-update:semver-major
       all:
         applies-to: version-updates
         patterns:
