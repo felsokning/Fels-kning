@@ -1,10 +1,10 @@
 // ----------------------------------------------------------------------
-// <copyright file="AggregateInternalsTests.cs" company="Felsökning">
-//      Copyright © Felsökning. All rights reserved.
+// <copyright file="AggregateInternalsTests.cs" company="Felsï¿½kning">
+//      Copyright ï¿½ Felsï¿½kning. All rights reserved.
 // </copyright>
 // <author>John Bailey</author>
 // ----------------------------------------------------------------------
-namespace Felsökning.Tests
+namespace FelsÃ¶kning.Tests
 {
     [ExcludeFromCodeCoverage]
     [TestClass]
