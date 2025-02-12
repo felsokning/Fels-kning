@@ -4,6 +4,7 @@
 // </copyright>
 // <author>John Bailey</author>
 // ----------------------------------------------------------------------
+[assembly: InternalsVisibleTo("Felsökning.Tests")]
 namespace Felsökning
 {
     /// <summary>

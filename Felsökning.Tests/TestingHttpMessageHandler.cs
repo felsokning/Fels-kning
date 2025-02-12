@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 // <copyright file="TestingHttpMessageHandler.cs" company="Felsökning">
 //      Copyright © Felsökning. All rights reserved.
 // </copyright>

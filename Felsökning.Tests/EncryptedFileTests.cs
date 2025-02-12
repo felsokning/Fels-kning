@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 // <copyright file="EncryptedFileTests.cs" company="Felsökning">
 //      Copyright © Felsökning. All rights reserved.
 // </copyright>

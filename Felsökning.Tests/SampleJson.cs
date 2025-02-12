@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 // <copyright file="SampleJson.cs" company="Felsökning">
 //      Copyright © Felsökning. All rights reserved.
 // </copyright>
