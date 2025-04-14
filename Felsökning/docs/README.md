@@ -1,99 +1,101 @@
 # Felsökning NuGet Package
-The Felsökning NuGet Package is, generally, the base package used/consumed/referenced by all other Felsökning NuGet packages (since .NET6.0).
+
+The Felsökning NuGet Package is the base library used by other Felsökning NuGet packages. It provides a variety of utility methods and extensions to simplify common programming tasks.
+
+## Features
+
+- Extensions for `AggregateException`, `DateTime`, and collection interfaces.
+- Utilities for working with encrypted files.
+- HTTP-related base classes and extensions.
+
+---
 
 ## `AggregateExceptionExtensions`
+
 This static class contains extension methods for the [AggregateException](https://learn.microsoft.com/en-us/dotnet/api/system.aggregateexception) class.
 
 ### Methods
 
 #### `Unbox()`
-##### Definition
-The `Unbox` method is used to recursively unbox the nested child exceptions within an AggregateException.
-##### Returns
- A `string[]`, in which `string[0]` is the hResults, `string[1]` is the exception messages, and `string[2]` is the stack traces.
+- **Definition**: Recursively unboxes the nested child exceptions within an `AggregateException`.
+- **Returns**: A `string[]` where:
+  - `string[0]`: hResults.
+  - `string[1]`: Exception messages.
+  - `string[2]`: Stack traces.
+
+---
 
 ## `CollectionExtensions`
+
 This static class contains extension methods for the [`ICollection<T>`], [`IEnumerable<T>`], and [`IList<T>`] interfaces.
 
 ### Methods
 
 #### `ToIAsyncEnumerable<T>()`
-##### Definition
-Extends the [`ICollection<T>`], [`IEnumerable<T>`], and/or [`IList<T>`] interfaces to return an [`IAsyncEnumerable{T}`](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1), which the iteration can be awaited through.
-##### Returns
-An `IAsyncEnumerable{T}`, which can be awaited through iteration.
+- **Definition**: Converts a collection or enumerable to an [`IAsyncEnumerable<T>`](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1), allowing asynchronous iteration.
+- **Returns**: An `IAsyncEnumerable<T>`.
+
+---
 
 ## `DateTimeExtensions`
-This static class contains extensions extension methods for the `DateTime` struct.
+
+This static class contains extension methods for the `DateTime` struct.
 
 ### Methods
 
 #### `IsWeekDay()`
-##### Definition
-Extends the `DateTime`struct to determine if the given `DateTime` object falls/occurs on a weekday in the Gregorian Calendar.
-
-##### Returns
-`true` if the given day is a weekday, otherwise `false`.
+- **Definition**: Determines if the given `DateTime` occurs on a weekday in the Gregorian calendar.
+- **Returns**: `true` if the day is a weekday, otherwise `false`.
 
 #### `ToCulturedString(string culture)`
-##### Definition
-Extends the `DateTime` struct to return a standardised string based on the passed culture.
-
-##### Returns
-A string representation of the `DateTime` struct in the culture-based format.
+- **Definition**: Converts the `DateTime` to a culture-specific string format.
+- **Returns**: A `string` representation of the `DateTime` in the specified culture format.
 
 #### `ToIso8601UtcString()`
-##### Definition
-Extends the `DateTime` struct to convert the given `DateTime` first to UTC Time Zone and then to the [ISO:8601](https://www.iso.org/iso-8601-date-and-time-format.html) `string` representation.
-
-##### Returns
-A string containing the `ISO:601` standardised value for the `DateTime` object.
+- **Definition**: Converts the `DateTime` to UTC and formats it as an [ISO:8601](https://www.iso.org/iso-8601-date-and-time-format.html) string.
+- **Returns**: A `string` in ISO:8601 format.
 
 #### `ToPosixTime()`
-##### Defintion
-Extends the `DateTime` struct to convert the given `DateTime` to the [POSIX time](https://pubs.opengroup.org/onlinepubs/9699919799/xrat/V4_xbd_chap04.html) representation.
-
-##### Returns
-A `long` representing the `DateTime` object in POSIX time representation.
+- **Definition**: Converts the `DateTime` to [POSIX time](https://pubs.opengroup.org/onlinepubs/9699919799/xrat/V4_xbd_chap04.html).
+- **Returns**: A `long` representing the `DateTime` in POSIX time.
 
 #### `ToRfc1123String()`
-##### Definition
-Extends the `DateTime` struct to convert the given `DateTime` to the [RFC:1123](https://www.rfc-editor.org/rfc/rfc822#section-5) `string` representation.
-
-##### Returns
-A `string` representing the `DateTime` object in RFC:1123 time representation.
+- **Definition**: Converts the `DateTime` to an [RFC:1123](https://www.rfc-editor.org/rfc/rfc822#section-5) string.
+- **Returns**: A `string` in RFC:1123 format.
 
 #### `ToUnixEpochTime()`
-Note: Duplicates `ToPosixTime()`
-##### Definition
-Extends the `DateTime` struct to convert the given `DateTime` to the [POSIX time](https://pubs.opengroup.org/onlinepubs/9699919799/xrat/V4_xbd_chap04.html) representation.
-
-##### Returns
-A `long` representing the `DateTime` object in POSIX time representation.
+- **Definition**: Converts the `DateTime` to Unix epoch time. (Duplicate of `ToPosixTime()`.)
+- **Returns**: A `long` representing the `DateTime` in Unix epoch time.
 
 #### `ToWeekNumber()`
-##### Definition
-Extends the `DateTime` struct to covert the given `DateTime` to the ISO:8601 week date, which is the given week number of the year.
-##### Returns
-An `int` representing the given week number of the year for the given `DateTime`.
+- **Definition**: Converts the `DateTime` to the ISO:8601 week number of the year.
+- **Returns**: An `int` representing the week number.
+
+---
 
 ## `EncryptedFile` Class
-### Definition 
-A class for ensuring System.IO.File objects are encrypted on entering `.Dispose()`.
 
-NOTE: Only supported on Windows Systems, Professional.
+A class for ensuring `System.IO.File` objects are encrypted when `.Dispose()` is called.
 
 ### Methods
-`DecryptAndOpen()`
-#### Definition
-Decrypts the file (if encrypted) and returns the [FileStream](https://learn.microsoft.com/en-us/dotnet/api/system.io.filestream) from opening the file.
 
-## HttpBase
-This is a base class meant for inheritance in any class that needs/depends on HttpClient.
+#### `DecryptAndOpen()`
+- **Definition**: Decrypts the file (if encrypted) and opens it as a [FileStream](https://learn.microsoft.com/en-us/dotnet/api/system.io.filestream).
+- **Returns**: A `FileStream` object.
 
-The HttpClient within `HttpBase` is initialized as using TLS1.3 and has default headers applied, such as `X-Correlation-ID`.
+---
 
-## HttpExtensions
-The `HttpExensions` class contains extensions to perform most HTTP-related tasks (e.g.: Get, Post, Put, etc.) and have the returned serialized into the `T` of your choice.
+## `HttpBase`
 
-For example, in `Felsökning.Ireland.MetÉireann`, we use `GetAsync<ForecastsForRegion>($"https://www.met.ie/Open_Data/json/{region}.json");` to return the data as the expected type, abstracting the need to do this manually (and repeat code) on the caller's end.
+A base class for any class that depends on `HttpClient`. The `HttpClient` is initialized with TLS 1.3 and default headers, such as `X-Correlation-ID`.
+
+---
+
+## `HttpExtensions`
+
+This static class contains extensions for performing HTTP-related tasks, such as `GET`, `POST`, and `PUT` requests, with automatic deserialization of responses.
+
+### Example
+
+```csharp
+var forecasts = await HttpExtensions.GetAsync<ForecastsForRegion>($"https://www.met.ie/Open_Data/json/{region}.json");
