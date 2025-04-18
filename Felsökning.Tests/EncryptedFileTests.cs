@@ -61,7 +61,7 @@ namespace Felsökning.Tests
         [Platform(Include = "Win")]
         public void EncrypedFile_ctor_Throws_ArgumentException()
         {
-            var result = Assert.ThrowsException<ArgumentException>(() =>
+            var result = Assert.ThrowsExactly<ArgumentException>(() =>
             {
                 _ = new EncryptedFile(string.Empty);
             });
@@ -74,7 +74,7 @@ namespace Felsökning.Tests
         [Platform(Include = "Win")]
         public void EncrypedFile_ctor_Throws_FileNotFoundException()
         {
-            var result = Assert.ThrowsException<FileNotFoundException>(() =>
+            var result = Assert.ThrowsExactly<FileNotFoundException>(() =>
             {
                 _ = new EncryptedFile("Something");
             });

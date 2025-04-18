@@ -16,7 +16,7 @@ namespace Felsökning.Tests
         [DataRow(null)]
         public void IsLower_ShouldFailForNullEmptyOrWhitespace(string sut)
         {
-            var exception = Assert.ThrowsException<ArgumentNullException>(() => sut.IsLower());
+            var exception = Assert.ThrowsExactly<ArgumentNullException>(() => sut.IsLower());
 
             exception.Should().BeOfType<ArgumentNullException>();
             exception.Message.Should().Be("Value cannot be null. (Parameter 'value')");
@@ -42,7 +42,7 @@ namespace Felsökning.Tests
         [DataRow(null)]
         public void IsUpper_ShouldFailForNullEmptyOrWhitespace(string sut)
         {
-            var exception = Assert.ThrowsException<ArgumentNullException>(() => sut.IsUpper());
+            var exception = Assert.ThrowsExactly<ArgumentNullException>(() => sut.IsUpper());
 
             exception.Should().BeOfType<ArgumentNullException>();
             exception.Message.Should().Be("Value cannot be null. (Parameter 'value')");
@@ -78,7 +78,7 @@ namespace Felsökning.Tests
         [DataRow(null)]
         public void GetPostnummerDetails_ShouldFailForNullOrEmpty(string sut)
         {
-            var exception = Assert.ThrowsException<ArgumentNullException>(() => sut.GetPostnummerDetails());
+            var exception = Assert.ThrowsExactly<ArgumentNullException>(() => sut.GetPostnummerDetails());
 
             exception.Should().BeOfType<ArgumentNullException>();
             exception.Message.Should().Be("Value cannot be null. (Parameter 'value')");
@@ -89,7 +89,7 @@ namespace Felsökning.Tests
         {
             var sut = "1234";
 
-            var exception = Assert.ThrowsException<ArgumentException>(() => sut.GetPostnummerDetails());
+            var exception = Assert.ThrowsExactly<ArgumentException>(() => sut.GetPostnummerDetails());
 
             exception.Should().BeOfType<ArgumentException>();
             exception.Message.Should().Be("The parameter supplied was too short to be a valid Swedish postnummer.");
@@ -100,7 +100,7 @@ namespace Felsökning.Tests
         {
             var sut = "1234567890";
 
-            var exception = Assert.ThrowsException<ArgumentException>(() => sut.GetPostnummerDetails());
+            var exception = Assert.ThrowsExactly<ArgumentException>(() => sut.GetPostnummerDetails());
 
             exception.Should().BeOfType<ArgumentException>();
             exception.Message.Should().Be("The parameter supplied was too long to be a valid Swedish postnummer.");
@@ -111,7 +111,7 @@ namespace Felsökning.Tests
         {
             var sut = "1b345";
 
-            var exception = Assert.ThrowsException<ArgumentException>(() => sut.GetPostnummerDetails());
+            var exception = Assert.ThrowsExactly<ArgumentException>(() => sut.GetPostnummerDetails());
 
             exception.Should().BeOfType<ArgumentException>();
             exception.Message.Should().Be("The parameter supplied had non-numeric characters, which postnummers do not.");
@@ -145,7 +145,7 @@ namespace Felsökning.Tests
         [DataRow(null)]
         public void IsValidPersonNummer_ShouldFailForNullOrEmpty(string sut)
         {
-            var exception = Assert.ThrowsException<ArgumentNullException>(() => sut.IsValidSwedishPersonNummer());
+            var exception = Assert.ThrowsExactly<ArgumentNullException>(() => sut.IsValidSwedishPersonNummer());
 
             exception.Should().BeOfType<ArgumentNullException>();
             exception.Message.Should().Be("Value cannot be null. (Parameter 'value')");
@@ -434,7 +434,7 @@ namespace Felsökning.Tests
         [DataRow(null)]
         public void ToArrayString_ShouldFailForNullOrEmpty(string[] sut)
         {
-            var exception = Assert.ThrowsException<StatusException>(() => sut.ToArrayString());
+            var exception = Assert.ThrowsExactly<StatusException>(() => sut.ToArrayString());
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status given in response: The given string was either null, empty, or whitespace");
@@ -464,7 +464,7 @@ namespace Felsökning.Tests
         {
             string testString = string.Empty;
 
-            var exception = Assert.ThrowsException<StatusException>(() => testString.Validate());
+            var exception = Assert.ThrowsExactly<StatusException>(() => testString.Validate());
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Contain("Invalid status given in response: The given string was either null, empty, or whitespace");
@@ -482,7 +482,7 @@ namespace Felsökning.Tests
         {
             string testString = string.Empty;
 
-            var exception = Assert.ThrowsException<StatusException>(() => testString.Validate(9));
+            var exception = Assert.ThrowsExactly<StatusException>(() => testString.Validate(9));
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Contain("Invalid status given in response: The given string was either null, empty, or whitespace");
@@ -493,7 +493,7 @@ namespace Felsökning.Tests
         {
             string testString = "something";
 
-            var exception = Assert.ThrowsException<StatusException>(() => testString.Validate(8));
+            var exception = Assert.ThrowsExactly<StatusException>(() => testString.Validate(8));
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Contain("Invalid status given in response: The given string was not the expected length of 8");
