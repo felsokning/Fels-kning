@@ -19,6 +19,15 @@ namespace Felsökning
         /// <returns>An <see cref="HttpContent"/> object with the Content-Type header of "application/json".</returns>
         public static HttpContent ToJsonHttpContent<T>(this T value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            if (value is HttpContent)
+            {
+                return value as HttpContent;
+            }
+
             var typeString = JsonSerializer.Serialize(value);
             var stringHttpContent = new StringContent(typeString);
             stringHttpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");

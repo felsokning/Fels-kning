@@ -53,7 +53,7 @@ namespace Felsökning.Tests
         {
             var numbers = new[] { 0, 1, 2, 3, };
 
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => await numbers.ToIAsyncEnumerable().ForEachAsync<int>(x => 
+            var exception = await Assert.ThrowsExactlyAsync<InvalidOperationException>(async () => await numbers.ToIAsyncEnumerable().ForEachAsync<int>(x => 
             { 
                 if (x == 2)
                 {

@@ -33,7 +33,7 @@ namespace Felsökning.Tests
             var nullReferenceException = new NullReferenceException("Null Reference Exception Message", argumentException);
             var aggregateException = new AggregateException(nullReferenceException);
 
-            var sut = await Assert.ThrowsExceptionAsync<AggregateException>(async () => await Task.FromException(aggregateException));
+            var sut = await Assert.ThrowsExactlyAsync<AggregateException>(async () => await Task.FromException(aggregateException));
 
             var result = sut.Unbox();
             result.Should().NotBeNullOrEmpty();

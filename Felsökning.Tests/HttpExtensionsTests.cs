@@ -90,7 +90,7 @@ namespace Felsökning.Tests
         public async Task GetDeserializedTypeData_Throws_StatusException()
         {
             HttpClient client = new(new TestingHttpMessageHandler());
-            var exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.GetAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/3"));
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.GetAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/3"));
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status response received. Status: NotFound. Message: The resource didn't exist, yo.");
             exception.InnerException.Should().BeNull();
@@ -100,7 +100,7 @@ namespace Felsökning.Tests
         public async Task GetDeserializedTypeData_ThrowsStatusException_ForException()
         {
             HttpClient client = new(new TestingHttpMessageHandler());
-            var exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.GetAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1000"));
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.GetAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1000"));
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status given in response: NotFound - Resource Not Found from 'https://jsonplaceholder.typicode.com/todos/1000'");
             var innerException = exception.InnerException;
@@ -125,7 +125,7 @@ namespace Felsökning.Tests
             HttpClient client = new(new TestingHttpMessageHandler());
             SampleJson patchTarget = new();
 
-            var exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PatchAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/3", patchTarget));
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PatchAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/3", patchTarget));
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status response received. Status: Received NotFound - Not Found from 'https://jsonplaceholder.typicode.com/todos/3'. Message: The resource didn't exist, yo.");
@@ -137,7 +137,7 @@ namespace Felsökning.Tests
         {
             HttpClient client = new(new TestingHttpMessageHandler());
             SampleJson patchTarget = new();
-            var exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PatchAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1000", patchTarget));
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PatchAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1000", patchTarget));
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status given in response: NotFound - Resource Not Found from 'https://jsonplaceholder.typicode.com/todos/1000'");
@@ -169,7 +169,7 @@ namespace Felsökning.Tests
             SampleJson patchTarget = new();
             var httpContent = new StringContent(JsonSerializer.Serialize(patchTarget));
 
-            var exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/3", httpContent));
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/3", httpContent));
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status response received. Status: Received NotFound - Not Found from 'https://jsonplaceholder.typicode.com/todos/3'. Message: The resource didn't exist, yo.");
@@ -183,7 +183,7 @@ namespace Felsökning.Tests
             SampleJson patchTarget = new();
             var httpContent = new StringContent(JsonSerializer.Serialize(patchTarget));
 
-            var exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1000", httpContent));
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1000", httpContent));
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status given in response: NotFound - Resource Not Found from 'https://jsonplaceholder.typicode.com/todos/1000'");
@@ -217,7 +217,7 @@ namespace Felsökning.Tests
             var httpContent = JsonSerializer.Serialize(patchTarget);
             var contentType = "application/json";
 
-            var exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/3", httpContent, contentType));
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/3", httpContent, contentType));
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status response received. Status: Received NotFound - Not Found from 'https://jsonplaceholder.typicode.com/todos/3'. Message: The resource didn't exist, yo.");
@@ -232,7 +232,7 @@ namespace Felsökning.Tests
             var httpContent = JsonSerializer.Serialize(patchTarget);
             var contentType = "application/json";
 
-            var exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1000", httpContent, contentType));
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1000", httpContent, contentType));
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status given in response: NotFound - Resource Not Found from 'https://jsonplaceholder.typicode.com/todos/1000'");
@@ -264,7 +264,7 @@ namespace Felsökning.Tests
             SampleJson patchTarget = new();
             var httpContent = new StringContent(JsonSerializer.Serialize(patchTarget));
 
-            var exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PutAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/3", httpContent));
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PutAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/3", httpContent));
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status response received. Status: Received NotFound - Not Found from 'https://jsonplaceholder.typicode.com/todos/3'. Message: The resource didn't exist, yo.");
@@ -278,7 +278,7 @@ namespace Felsökning.Tests
             SampleJson patchTarget = new();
             var httpContent = new StringContent(JsonSerializer.Serialize(patchTarget));
 
-            var exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PutAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1000", httpContent));
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PutAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1000", httpContent));
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status given in response: NotFound - Resource Not Found from 'https://jsonplaceholder.typicode.com/todos/1000'");
@@ -312,7 +312,7 @@ namespace Felsökning.Tests
             var httpContent = JsonSerializer.Serialize(patchTarget);
             var contentType = "application/json";
 
-            var exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PutAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/3", httpContent, contentType));
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PutAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/3", httpContent, contentType));
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status response received. Status: Received NotFound - Not Found from 'https://jsonplaceholder.typicode.com/todos/3'. Message: The resource didn't exist, yo.");
@@ -327,7 +327,7 @@ namespace Felsökning.Tests
             var httpContent = JsonSerializer.Serialize(patchTarget);
             var contentType = "application/json";
 
-            var exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PutAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1000", httpContent, contentType));
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PutAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1000", httpContent, contentType));
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status given in response: NotFound - Resource Not Found from 'https://jsonplaceholder.typicode.com/todos/1000'");
@@ -345,12 +345,12 @@ namespace Felsökning.Tests
             var contentType = "application/json";
             var stringContent = new StringContent(httpContent, new MediaTypeHeaderValue("application/json"));
 
-            var getException = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.GetAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/999999"));
-            var patchException = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PatchAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/999999", patchTarget));
-            var postException = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/999999", httpContent, contentType));
-            var post2Exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/999999", stringContent));
-            var putException = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PutAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/999999", httpContent, contentType));
-            var put2Exception = await Assert.ThrowsExceptionAsync<StatusException>(async () => await client.PutAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/999999", stringContent));
+            var getException = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.GetAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/999999"));
+            var patchException = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PatchAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/999999", patchTarget));
+            var postException = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/999999", httpContent, contentType));
+            var post2Exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/999999", stringContent));
+            var putException = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PutAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/999999", httpContent, contentType));
+            var put2Exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PutAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/999999", stringContent));
 
             getException.Should().BeOfType<StatusException>();
             patchException.Should().BeOfType<StatusException>();
@@ -358,6 +358,17 @@ namespace Felsökning.Tests
             post2Exception.Should().BeOfType<StatusException>();
             putException.Should().BeOfType<StatusException>();
             put2Exception.Should().BeOfType<StatusException>();
+        }
+
+        [TestMethod]
+        public void RemoveHeader_ShouldSucceed()
+        {
+            HttpClient client = new();
+            client.DefaultRequestHeaders.Add("X-Test-Header", "TestValue");
+
+            client.RemoveHeader("X-Test-Header");
+
+            Assert.IsFalse(client.DefaultRequestHeaders.Contains("X-Test-Header"));
         }
     }
 }

@@ -31,5 +31,28 @@ namespace Felsökning.Tests
             contentString.Should().NotBeNullOrWhiteSpace();
             contentString.Should().Be("{\"userId\":444,\"id\":8675309,\"title\":\"A Test Title\",\"completed\":true}");
         }
+
+        [TestMethod]
+        public void ToJsonHttpContent_ShouldThrowForNullInput()
+        {
+            SampleJson sut = null;
+
+            var result = Assert.Throws<ArgumentNullException>(() => sut.ToJsonHttpContent());
+
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ArgumentNullException>();
+            result.Message.Should().Contain("Value cannot be null. (Parameter 'value')");
+        }
+
+        [TestMethod]
+        public void ToJsonHttpContent_ShouldPassBackHttpContent()
+        {
+            var sut = new StringContent("This is string content!");
+            var result = sut.ToJsonHttpContent();
+            result.Should().NotBeNull();
+
+            // StringContent Inherits from HttpContent
+            result.Should().BeOfType<StringContent>();
+        }
     }
 }
