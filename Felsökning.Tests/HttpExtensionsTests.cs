@@ -59,13 +59,12 @@ namespace Felsökning.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void ValidateHeaderRemoved()
         {
             HttpClient client = new();
             client.GenerateNewRequestId();
             client.RemoveHeader("X-Request-ID");
-            Assert.IsTrue(string.IsNullOrWhiteSpace(client.DefaultRequestHeaders.GetValues("X-Request-ID").FirstOrDefault()));
+            Assert.ThrowsExactly<InvalidOperationException>(() => client.DefaultRequestHeaders.GetValues("X-Request-ID").FirstOrDefault());
         }
 
         [TestMethod]
@@ -233,6 +232,99 @@ namespace Felsökning.Tests
             var contentType = "application/json";
 
             var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () => await client.PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/1000", httpContent, contentType));
+
+            exception.Should().BeOfType<StatusException>();
+            exception.Message.Should().Be("Invalid status given in response: NotFound - Resource Not Found from 'https://jsonplaceholder.typicode.com/todos/1000'");
+            var innerException = exception.InnerException;
+            innerException.Should().BeOfType<HttpRequestException>();
+            innerException?.Message.Should().Be("Resource Not Found");
+        }
+
+        [TestMethod]
+        public async Task PostDeserializedTypeData_Generic_Succeeds()
+        {
+            HttpClient httpClient = new(new TestingHttpMessageHandler());
+            SampleJson postTarget = new();
+
+            var result = await httpClient.PostAsync<SampleJson, SampleJson>("https://jsonplaceholder.typicode.com/todos/1", postTarget);
+
+            result.Should().NotBeNull();
+            result.Completed.Should().BeTrue();
+            result.Id.Should().Be(8675309);
+            result.Title.Should().Be("Super Secret and Diabolical Plans");
+            result.UserId.Should().Be(24);
+        }
+
+        [TestMethod]
+        public async Task PostDeserializedTypeData_Generic_Throws_StatusException()
+        {
+            HttpClient client = new(new TestingHttpMessageHandler());
+            SampleJson postTarget = new();
+
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () =>
+                await client.PostAsync<SampleJson, SampleJson>("https://jsonplaceholder.typicode.com/todos/3", postTarget));
+
+            exception.Should().BeOfType<StatusException>();
+            exception.Message.Should().Be("Invalid status response received. Status: Received NotFound - Not Found from 'https://jsonplaceholder.typicode.com/todos/3'. Message: The resource didn't exist, yo.");
+            exception.InnerException.Should().BeNull();
+        }
+
+        [TestMethod]
+        public async Task PostDeserializedTypeData_Generic_Throws_StatusException_ForException()
+        {
+            HttpClient client = new(new TestingHttpMessageHandler());
+            SampleJson postTarget = new();
+
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () =>
+                await client.PostAsync<SampleJson, SampleJson>("https://jsonplaceholder.typicode.com/todos/1000", postTarget));
+
+            exception.Should().BeOfType<StatusException>();
+            exception.Message.Should().Be("Invalid status given in response: NotFound - Resource Not Found from 'https://jsonplaceholder.typicode.com/todos/1000'");
+            var innerException = exception.InnerException;
+            innerException.Should().BeOfType<HttpRequestException>();
+            innerException?.Message.Should().Be("Resource Not Found");
+        }
+
+        [TestMethod]
+        public async Task PostDeserializedTypeData_Generic_Uri_Succeeds()
+        {
+            HttpClient httpClient = new(new TestingHttpMessageHandler());
+            SampleJson postTarget = new();
+            var uri = new Uri("https://jsonplaceholder.typicode.com/todos/1");
+
+            var result = await httpClient.PostAsync<SampleJson, SampleJson>(uri, postTarget);
+
+            result.Should().NotBeNull();
+            result.Completed.Should().BeTrue();
+            result.Id.Should().Be(8675309);
+            result.Title.Should().Be("Super Secret and Diabolical Plans");
+            result.UserId.Should().Be(24);
+        }
+
+        [TestMethod]
+        public async Task PostDeserializedTypeData_Generic_Uri_Throws_StatusException()
+        {
+            HttpClient client = new(new TestingHttpMessageHandler());
+            SampleJson postTarget = new();
+            var uri = new Uri("https://jsonplaceholder.typicode.com/todos/3");
+
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () =>
+                await client.PostAsync<SampleJson, SampleJson>(uri, postTarget));
+
+            exception.Should().BeOfType<StatusException>();
+            exception.Message.Should().Be("Invalid status response received. Status: Received NotFound - Not Found from '/todos/3'. Message: The resource didn't exist, yo.");
+            exception.InnerException.Should().BeNull();
+        }
+
+        [TestMethod]
+        public async Task PostDeserializedTypeData_Generic_Uri_Throws_StatusException_ForException()
+        {
+            HttpClient client = new(new TestingHttpMessageHandler());
+            SampleJson postTarget = new();
+            var uri = new Uri("https://jsonplaceholder.typicode.com/todos/1000");
+
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(async () =>
+                await client.PostAsync<SampleJson, SampleJson>(uri, postTarget));
 
             exception.Should().BeOfType<StatusException>();
             exception.Message.Should().Be("Invalid status given in response: NotFound - Resource Not Found from 'https://jsonplaceholder.typicode.com/todos/1000'");
