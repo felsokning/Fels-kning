@@ -71,15 +71,16 @@ namespace Felsökning
         ///     <para>We only check for successful HTTP responses. Any continuations must be handled by the caller.</para>
         /// </summary>
         /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
-        /// <param name="requestUrl">The web url to do the request from.</param>
+        /// <param name="requestUrl">The URI the request is sent to.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>An awaitable <see cref="Task{T}"/> of <typeparamref name="T"/></returns>
-        public static async Task<T> GetAsync<T>(this HttpClient httpClient, string requestUrl)
+        public static async Task<T> GetAsync<T>(this HttpClient httpClient, string requestUrl, CancellationToken cancellationToken = default)
         {
             var requestId = string.Empty;
             try
             {
                 requestId = httpClient.GenerateNewRequestId();
-                HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(requestUrl);
+                HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(requestUrl, cancellationToken);
                 string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
@@ -137,20 +138,21 @@ namespace Felsökning
         /// </summary>
         /// <typeparam name="T">The base type to be deserialized and patched.</typeparam>
         /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
-        /// <param name="requestUrl">The web url to do the request from.</param>
+        /// <param name="requestUrl">The URI the request is sent to.</param>
         /// <param name="typeObject">The object to be deserialized and patched.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>An awaitable <see cref="Task{T}"/> of <typeparamref name="T"/></returns>
-        public static async Task<T> PatchAsync<T>(this HttpClient httpClient, string requestUrl, T typeObject)
+        public static async Task<T> PatchAsync<T>(this HttpClient httpClient, string requestUrl, T typeObject, CancellationToken cancellationToken = default)
         {
             var requestId = string.Empty;
             try
             {
                 requestId = httpClient.GenerateNewRequestId();
-                HttpRequestMessage httpRequestMessage = new(method: new HttpMethod("PATCH"), requestUri: requestUrl)
+                HttpRequestMessage httpRequestMessage = new(new HttpMethod("PATCH"), requestUrl)
                 {
-                    Content = new StringContent(content: JsonSerializer.Serialize(typeObject))
+                    Content = new StringContent(JsonSerializer.Serialize(typeObject))
                 };
-                HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(request: httpRequestMessage);
+                HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(httpRequestMessage, cancellationToken);
                 string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
@@ -205,19 +207,20 @@ namespace Felsökning
 
         /// <summary>
         ///     Obtains the HTTP response from the given URL and deserializes it into the given object of <typeparamref name="T"/>.
-        ///     We only check for successful HTTP responses. Any continuations must be handled by the caller.
+        ///     <para>We only check for successful HTTP responses. Any continuations must be handled by the caller.</para>
         /// </summary>
         /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
-        /// <param name="requestUrl">The web url to do the request from.</param>
+        /// <param name="requestUrl">The URI the request is sent to.</param>
         /// <param name="httpContent">The content to be posted, in string form.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>An awaitable <see cref="Task{T}"/></returns>
-        public static async Task<T> PostAsync<T>(this HttpClient httpClient, string requestUrl, HttpContent httpContent)
+        public static async Task<T> PostAsync<T>(this HttpClient httpClient, string requestUrl, HttpContent httpContent, CancellationToken cancellationToken = default)
         {
             var requestId = string.Empty;
             try
             {
                 requestId = httpClient.GenerateNewRequestId();
-                HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(requestUri: requestUrl, content: httpContent);
+                HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(requestUrl, httpContent, cancellationToken);
                 string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
@@ -272,22 +275,91 @@ namespace Felsökning
 
         /// <summary>
         ///     Obtains the HTTP response from the given URL and deserializes it into the given object of <typeparamref name="T"/>.
-        ///     We only check for successful HTTP responses. Any continuations must be handled by the caller.
+        ///     <para>We only check for successful HTTP responses. Any continuations must be handled by the caller.</para>
         /// </summary>
         /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
-        /// <param name="requestUrl">The web url to do the request from.</param>
+        /// <param name="requestUrl">The URI the request is sent to.</param>
+        /// <param name="httpContent">The content to be posted, in string form.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>An awaitable <see cref="Task{T}"/></returns>
+        public static async Task<T> PostAsync<T>(this HttpClient httpClient, Uri requestUrl, HttpContent httpContent, CancellationToken cancellationToken = default)
+        {
+            var requestId = string.Empty;
+            try
+            {
+                requestId = httpClient.GenerateNewRequestId();
+                HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(requestUrl, httpContent, cancellationToken);
+                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                if (httpResponseMessage.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions();
+                    options.Converters.Add(new JsonStringEnumConverter());
+                    options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    return JsonSerializer.Deserialize<T>(httpResponseMessageContent, options)!;
+                }
+                else
+                {
+                    var httpRecord = new HttpRecord
+                    {
+                        Url = requestUrl.AbsolutePath,
+                        RequestId = requestId,
+                        Method = HttpMethod.Post.ToString(),
+                        StatusCode = httpResponseMessage.StatusCode.ToString(),
+                        Content = httpResponseMessageContent,
+                    };
+
+                    throw new StatusException($"Received {httpResponseMessage.StatusCode} - {httpResponseMessage.ReasonPhrase} from '{requestUrl.AbsolutePath}'", httpResponseMessageContent, httpRecord);
+                }
+            }
+            catch (HttpRequestException thrownException)
+            {
+                HttpRecord? httpRecord;
+                if (thrownException.StatusCode == null)
+                {
+                    httpRecord = new HttpRecord
+                    {
+                        Url = requestUrl.AbsolutePath,
+                        RequestId = requestId,
+                        Method = HttpMethod.Get.Method,
+                        StatusCode = string.Empty,
+                        Content = thrownException.Message,
+                    };
+                }
+                else
+                {
+                    httpRecord = new HttpRecord
+                    {
+                        Url = requestUrl.AbsolutePath,
+                        RequestId = requestId,
+                        Method = HttpMethod.Get.Method,
+                        StatusCode = thrownException.StatusCode!.ToString()!,
+                        Content = thrownException.Message,
+                    };
+                }
+
+                throw new StatusException($"{thrownException.StatusCode} - {thrownException.Message} from '{requestUrl.AbsolutePath}'", thrownException, httpRecord);
+            }
+        }
+
+        /// <summary>
+        ///     Obtains the HTTP response from the given URL and deserializes it into the given object of <typeparamref name="T"/>.
+        ///     <para>We only check for successful HTTP responses. Any continuations must be handled by the caller.</para>
+        /// </summary>
+        /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
+        /// <param name="requestUrl">The URI the request is sent to.</param>
         /// <param name="stringContent">The content to be posted, in string form.</param>
         /// <param name="contentType">The content type the server should be expecting.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>An awaitable <see cref="Task{T}"/></returns>
-        public static async Task<T> PostAsync<T>(this HttpClient httpClient, string requestUrl, string stringContent, string contentType)
+        public static async Task<T> PostAsync<T>(this HttpClient httpClient, string requestUrl, string stringContent, string contentType, CancellationToken cancellationToken = default)
         {
             var requestId = string.Empty;
             try
             {
                 requestId = httpClient.GenerateNewRequestId();
-                HttpContent httpContent = new StringContent(content: stringContent);
-                httpContent.Headers.ContentType = new MediaTypeHeaderValue(mediaType: contentType);
-                HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(requestUri: requestUrl, content: httpContent);
+                HttpContent httpContent = new StringContent(stringContent);
+                httpContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+                HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(requestUrl, httpContent, cancellationToken);
                 string? httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
@@ -342,19 +414,158 @@ namespace Felsökning
 
         /// <summary>
         ///     Obtains the HTTP response from the given URL and deserializes it into the given object of <typeparamref name="T"/>.
-        ///     We only check for successful HTTP responses. Any continuations must be handled by the caller.
+        ///     <para>We only check for successful HTTP responses. Any continuations must be handled by the caller.</para>
         /// </summary>
         /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
-        /// <param name="requestUrl">The web url to do the request from.</param>
+        /// <param name="requestUrl">The URI the request is sent to.</param>
+        /// <param name="obj">The content to be posted.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>An awaitable <see cref="Task{T}"/></returns>
+        public static async Task<T> PostAsync<T, T1>(this HttpClient httpClient, string requestUrl, T1 obj, CancellationToken cancellationToken = default)
+        {
+            var requestId = string.Empty;
+            try
+            {
+                requestId = httpClient.GenerateNewRequestId();
+                var httpContent = new StringContent(content: JsonSerializer.Serialize(obj));
+                HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(requestUrl, httpContent, cancellationToken);
+                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                if (httpResponseMessage.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions();
+                    options.Converters.Add(new JsonStringEnumConverter());
+                    options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    return JsonSerializer.Deserialize<T>(httpResponseMessageContent, options)!;
+                }
+                else
+                {
+                    var httpRecord = new HttpRecord
+                    {
+                        Url = requestUrl,
+                        RequestId = requestId,
+                        Method = HttpMethod.Post.ToString(),
+                        StatusCode = httpResponseMessage.StatusCode.ToString(),
+                        Content = httpResponseMessageContent,
+                    };
+
+                    throw new StatusException($"Received {httpResponseMessage.StatusCode} - {httpResponseMessage.ReasonPhrase} from '{requestUrl}'", httpResponseMessageContent, httpRecord);
+                }
+            }
+            catch (HttpRequestException thrownException)
+            {
+                HttpRecord? httpRecord;
+                if (thrownException.StatusCode == null)
+                {
+                    httpRecord = new HttpRecord
+                    {
+                        Url = requestUrl,
+                        RequestId = requestId,
+                        Method = HttpMethod.Get.Method,
+                        StatusCode = string.Empty,
+                        Content = thrownException.Message,
+                    };
+                }
+                else
+                {
+                    httpRecord = new HttpRecord
+                    {
+                        Url = requestUrl,
+                        RequestId = requestId,
+                        Method = HttpMethod.Get.Method,
+                        StatusCode = thrownException.StatusCode!.ToString()!,
+                        Content = thrownException.Message,
+                    };
+                }
+
+                throw new StatusException($"{thrownException.StatusCode} - {thrownException.Message} from '{requestUrl}'", thrownException, httpRecord);
+            }
+        }
+
+        /// <summary>
+        ///     Obtains the HTTP response from the given URL and deserializes it into the given object of <typeparamref name="T"/>.
+        ///     <para>We only check for successful HTTP responses. Any continuations must be handled by the caller.</para>
+        /// </summary>
+        /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
+        /// <param name="requestUrl">The URI the request is sent to.</param>
+        /// <param name="obj">The <typeparamref name="T1"/> content to be posted.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>An awaitable <see cref="Task{T}"/></returns>
+        public static async Task<T> PostAsync<T, T1>(this HttpClient httpClient, Uri requestUrl, T1 obj, CancellationToken cancellationToken = default)
+        {
+            var requestId = string.Empty;
+            try
+            {
+                requestId = httpClient.GenerateNewRequestId();
+                var httpContent = new StringContent(content: JsonSerializer.Serialize(obj));
+                HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(requestUrl, httpContent, cancellationToken);
+                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                if (httpResponseMessage.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions();
+                    options.Converters.Add(new JsonStringEnumConverter());
+                    options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    return JsonSerializer.Deserialize<T>(httpResponseMessageContent, options)!;
+                }
+                else
+                {
+                    var httpRecord = new HttpRecord
+                    {
+                        Url = requestUrl.AbsolutePath,
+                        RequestId = requestId,
+                        Method = HttpMethod.Post.ToString(),
+                        StatusCode = httpResponseMessage.StatusCode.ToString(),
+                        Content = httpResponseMessageContent,
+                    };
+
+                    throw new StatusException($"Received {httpResponseMessage.StatusCode} - {httpResponseMessage.ReasonPhrase} from '{requestUrl.AbsolutePath}'", httpResponseMessageContent, httpRecord);
+                }
+            }
+            catch (HttpRequestException thrownException)
+            {
+                HttpRecord? httpRecord;
+                if (thrownException.StatusCode == null)
+                {
+                    httpRecord = new HttpRecord
+                    {
+                        Url = requestUrl.AbsolutePath,
+                        RequestId = requestId,
+                        Method = HttpMethod.Get.Method,
+                        StatusCode = string.Empty,
+                        Content = thrownException.Message,
+                    };
+                }
+                else
+                {
+                    httpRecord = new HttpRecord
+                    {
+                        Url = requestUrl.AbsolutePath,
+                        RequestId = requestId,
+                        Method = HttpMethod.Get.Method,
+                        StatusCode = thrownException.StatusCode!.ToString()!,
+                        Content = thrownException.Message,
+                    };
+                }
+
+                throw new StatusException($"{thrownException.StatusCode} - {thrownException.Message} from '{requestUrl}'", thrownException, httpRecord);
+            }
+        }
+
+        /// <summary>
+        ///     Obtains the HTTP response from the given URL and deserializes it into the given object of <typeparamref name="T"/>.
+        ///     <para>We only check for successful HTTP responses. Any continuations must be handled by the caller.</para>
+        /// </summary>
+        /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
+        /// <param name="requestUrl">The URI the request is sent to.</param>
         /// <param name="httpContent">The content to be put.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>An awaitable <see cref="Task{T}"/></returns>
-        public static async Task<T> PutAsync<T>(this HttpClient httpClient, string requestUrl, HttpContent httpContent)
+        public static async Task<T> PutAsync<T>(this HttpClient httpClient, string requestUrl, HttpContent httpContent, CancellationToken cancellationToken = default)
         {
             var requestId = string.Empty;
             try
             {
                 requestId = httpClient.GenerateNewRequestId();
-                HttpResponseMessage httpResponseMessage = await httpClient.PutAsync(requestUri: requestUrl, content: httpContent);
+                HttpResponseMessage httpResponseMessage = await httpClient.PutAsync(requestUri: requestUrl, content: httpContent, cancellationToken);
                 string? httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
@@ -409,14 +620,14 @@ namespace Felsökning
 
         /// <summary>
         ///     Obtains the HTTP response from the given URL and deserializes it into the given object of <typeparamref name="T"/>.
-        ///     We only check for successful HTTP responses. Any continuations must be handled by the caller.
+        ///     <para>We only check for successful HTTP responses. Any continuations must be handled by the caller.</para>
         /// </summary>
         /// <param name="httpClient">The current <see cref="HttpClient"/> context.</param>
-        /// <param name="requestUrl">The web url to do the request from.</param>
+        /// <param name="requestUrl">The URI the request is sent to.</param>
         /// <param name="stringContent">The content to be put, in string form.</param>
         /// <param name="contentType">The content type the server should be expecting.</param>
         /// <returns>An awaitable <see cref="Task{T}"/></returns>
-        public static async Task<T> PutAsync<T>(this HttpClient httpClient, string requestUrl, string stringContent, string contentType)
+        public static async Task<T> PutAsync<T>(this HttpClient httpClient, string requestUrl, string stringContent, string contentType, CancellationToken cancellationToken = default)
         {
             var requestId = string.Empty;
             try
