@@ -69,6 +69,15 @@ namespace Felsökning.Tests
         }
 
         [TestMethod]
+        public void ToOasString_ShouldReturn_ExpectedValue()
+        {
+            var dateTime = new DateTime(2023, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+            var result = dateTime.ToOasString();
+            result.Should().NotBeNullOrWhiteSpace();
+            result.Should().Be("2023-01-01T00:00:00Z");
+        }
+
+        [TestMethod]
         public void ToPosixTime_ShouldReturn_ExpectedValue()
         {
             var dateTime = new DateTime(1975, 01, 28, 16, 39, 13, DateTimeKind.Utc);

@@ -13,106 +13,126 @@ namespace Felsökning.Tests
     public class IAsyncEnumerableExtensionsTests
     {
         [TestMethod]
-        public async Task FindAsync_DoesntFindValue()
+        public async Task FindAsync_WhenValueDoesNotExist_ReturnsDefault()
         {
-            var numbers = new[] { 0, 1, 2, 3, };
+            // Arrange
+            var numbers = new[] { 0, 1, 2, 3 };
 
+            // Act
             var result = await numbers
                 .ToIAsyncEnumerable()
-                .FindAsync(x => x == 100);
+                .FindAsync(x => x == 100)
+                .ConfigureAwait(false);
 
+            // Assert
             result.Should().Be(0);
         }
 
         [TestMethod]
-        public async Task FindAsync_FindsValue()
+        public async Task FindAsync_WhenValueExists_ReturnsValue()
         {
-            var numbers = new[] { 0, 1, 2, 3, };
+            // Arrange
+            var numbers = new[] { 0, 1, 2, 3 };
 
+            // Act
             var result = await numbers
                 .ToIAsyncEnumerable()
-                .FindAsync(x => x == 0);
+                .FindAsync(x => x == 0)
+                .ConfigureAwait(false);
 
+            // Assert
             result.Should().Be(0);
         }
 
         [TestMethod]
-        public async Task ForEachAsync_Type_DebugLog()
+        public async Task ForEachAsync_WithDebugLogging_ProcessesAllItems()
         {
-            var numbers = new[] { 0, 1, 2, 3, };
+            // Arrange
+            var numbers = new[] { 0, 1, 2, 3 };
 
+            // Act
             await numbers
                 .ToIAsyncEnumerable()
-                .ForEachAsync<int>(x => { Debug.WriteLine(x); });
+                .ForEachAsync<int>(x => { Debug.WriteLine(x); })
+                .ConfigureAwait(false);
 
+            // Assert
             numbers.Should().NotBeNullOrEmpty();
         }
 
         [TestMethod]
-        public async Task ForEachAsync_Type_Throws()
+        public async Task ForEachAsync_WhenThrowsException_PropagatesException()
         {
-            var numbers = new[] { 0, 1, 2, 3, };
+            // Arrange
+            var numbers = new[] { 0, 1, 2, 3 };
 
-            var exception = await Assert.ThrowsExactlyAsync<InvalidOperationException>(async () => await numbers.ToIAsyncEnumerable().ForEachAsync<int>(x => 
-            { 
-                if (x == 2)
-                {
-                    throw new InvalidOperationException();
-                }
-            }));
-
+            // Act & Assert
+            var exception = await Assert.ThrowsExactlyAsync<InvalidOperationException>(
+                async () => await numbers
+                    .ToIAsyncEnumerable()
+                    .ForEachAsync<int>(x => 
+                    { 
+                        if (x == 2)
+                        {
+                            throw new InvalidOperationException();
+                        }
+                    })
+                    .ConfigureAwait(false)
+            ).ConfigureAwait(false);
 
             exception.Should().NotBeNull();
             exception.Should().BeOfType<InvalidOperationException>();
         }
 
         [TestMethod]
-        public async Task ForEachAsync_Type_Type_AddNumbersAsynchronously()
+        public async Task ForEachAsync_WithTransformation_TransformsAllItems()
         {
-            var numbers = new[] { 0, 1, 2, 3, };
+            // Arrange
+            var numbers = new[] { 0, 1, 2, 3 };
+            var expectedValues = new[] { 3, 4, 5, 6 };
 
-            var addedAsyncEnumerbale = numbers
+            // Act
+            var addedAsyncEnumerable = numbers
                 .ToIAsyncEnumerable()
-                .ForEachAsync<int, int>(x => { return x + 3; });
+                .ForEachAsync<int, int>(x => x + 3);
 
-            addedAsyncEnumerbale.Should().NotBeNull();
-            var enumerator = addedAsyncEnumerbale.GetAsyncEnumerator();
-            await enumerator.MoveNextAsync();
+            // Assert
+            addedAsyncEnumerable.Should().NotBeNull();
+            
+            // Use using statement for proper disposal
+            await using var enumerator = addedAsyncEnumerable.GetAsyncEnumerator();
+            
+            for (var i = 0; i < expectedValues.Length; i++)
+            {
+                var hasNext = await enumerator.MoveNextAsync().ConfigureAwait(false);
+                hasNext.Should().BeTrue($"Expected item at index {i}");
+                enumerator.Current.Should().Be(expectedValues[i]);
+            }
 
-            enumerator.Current.Should().BeGreaterThanOrEqualTo(3);
-
-            await enumerator.MoveNextAsync();
-
-            enumerator.Current.Should().BeGreaterThanOrEqualTo(4);
-
-            await enumerator.MoveNextAsync();
-
-            enumerator.Current.Should().BeGreaterThanOrEqualTo(5);
-
-            await enumerator.MoveNextAsync();
-
-            enumerator.Current.Should().BeGreaterThanOrEqualTo(6);
-
-            await enumerator.MoveNextAsync();
+            (await enumerator.MoveNextAsync().ConfigureAwait(false)).Should().BeFalse("Should have no more items");
         }
 
         [TestMethod]
-        public void IAsyncEnumerable_Where_Succeeds()
+        [DataRow("testing", true, 1)]
+        [DataRow("something", false, 1)]
+        [DataRow("notfound", false, 0)]
+        public async Task WhereAsync_WithDifferentFilters_ReturnsExpectedResults(string searchTerm, bool shouldFind, int expectedCount)
         {
+            // Arrange
             var list = new List<string> { "testing", "something", "here" };
 
-            var negativeResult = list.ToIAsyncEnumerable().WhereAsync(x => x == "Test");
-            negativeResult.Should().NotBeNull();
-
-            var negativeEnumerable = negativeResult.ToBlockingEnumerable();
-            negativeEnumerable.Count().Should().Be(0);
-
-            var positiveResult = list.ToIAsyncEnumerable().WhereAsync(x => x == "testing");
-            positiveResult.Should().NotBeNull();
+            // Act
+            var filteredResult = list.ToIAsyncEnumerable().WhereAsync(x => x == searchTerm);
             
-            var positiveEnumerable = positiveResult.ToBlockingEnumerable();
-            positiveEnumerable.Count().Should().Be(1);
-            positiveEnumerable.First().Should().Be("testing");
+            // Assert
+            filteredResult.Should().NotBeNull();
+            var results = await filteredResult.ToListAsync().ConfigureAwait(false);
+            
+            results.Count.Should().Be(expectedCount);
+            if (shouldFind)
+            {
+                results.Should().Contain(searchTerm);
+            }
         }
     }
 }
