@@ -48,6 +48,16 @@ namespace Felsökning
         }
 
         /// <summary>
+        ///     Returns a DateTime as a string formatted according to the OpenAPI Specification (OAS).
+        /// </summary>
+        /// <param name="dateTime">The current <see cref="DateTime"/> object in question.</param>
+        /// <returns>A string representing the DateTime in the OpenAPI Specification (OAS).</returns>
+        public static string ToOasString(this DateTime dateTime)
+        {
+            return dateTime.ToString("yyyy-MM-ddTHH:mm:ssK");
+        }
+
+        /// <summary>
         ///     Extends the <see cref="DateTime"/> object to return a POSIX time structure.
         /// </summary>
         /// <param name="dateTime">The current <see cref="DateTime"/> object in question.</param>

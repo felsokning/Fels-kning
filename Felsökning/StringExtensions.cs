@@ -24,9 +24,9 @@ namespace Felsökning
             }
 
             // Because postnummers are often written as "nnn nn", we need to sanitize the input.
-            if (value.Contains(value: " "))
+            if (value.Contains(value: ' '))
             {
-                value = Regex.Replace(input: value, pattern: " ", replacement: string.Empty);
+                value = Regex.Replace(input: value, pattern: " ", replacement: string.Empty, RegexOptions.None, TimeSpan.FromSeconds(1));
             }
 
             // Don't bother going forward if the string is too short.
@@ -47,7 +47,7 @@ namespace Felsökning
                 throw new ArgumentException(message: "The parameter supplied had non-numeric characters, which postnummers do not.");
             }
 
-            List<string> returns = new List<string>(0);
+            List<string> returns = [];
 
             using (Dictionaries dictionaries = new())
             {
@@ -238,9 +238,10 @@ namespace Felsökning
         }
 
         /// <summary>
-        ///     Validates the given string is not null, empty, or whitespace.
+        ///     Validates the given string is not null, empty, or whitespace and does not contain SQL injection attempts.
         /// </summary>
         /// <param name="value">The current string value context.</param>
+        /// <exception cref="StatusException">Thrown when the string is invalid or contains potential SQL injection patterns.</exception>
         public static void Validate(this string value)
         {
             if (string.IsNullOrWhiteSpace(value: value))
@@ -248,6 +249,29 @@ namespace Felsökning
                 throw new StatusException(
                     "The given string was either null, empty, or whitespace",
                     new ArgumentException($"The given string was either null, empty, or whitespace", nameof(value)));
+            }
+
+            // Check for common SQL injection patterns
+            string[] sqlInjectionPatterns =
+            [
+                @";\s*DROP\s+",
+                @";\s*DELETE\s+",
+                @";\s*UPDATE\s+",
+                @";\s*INSERT\s+",
+                @"'\s*OR\s+'1'\s*=\s*'1",
+                @"'\s*OR\s+'1'\s*=\s*'1\s*--",
+                @"--\s*$",
+                @"/\*.*\*/",
+                @"UNION\s+ALL\s+SELECT",
+                @"UNION\s+SELECT"
+            ];
+
+            if (sqlInjectionPatterns.Any(pattern =>
+                Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250))))
+            {
+                throw new StatusException(
+                    "The given string contains potential SQL injection patterns",
+                    new ArgumentException("The given string contains potential SQL injection patterns", nameof(value)));
             }
         }
 

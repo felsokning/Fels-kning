@@ -1,11 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.4.33213.308
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11104.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Felsökning", "Felsökning\Felsökning.csproj", "{270025C2-E524-3D18-3B4A-F7A863EE1466}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Felsökning.Tests", "Felsökning.Tests\Felsökning.Tests.csproj", "{794BD9FB-B021-4386-4FBE-B21E80F48B5C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{95896AAB-62F3-4AE6-A9ED-BC517FA427B6}"
+	ProjectSection(SolutionItems) = preProject
+		.github\prompts\csharp-async.prompt.md = .github\prompts\csharp-async.prompt.md
+		.github\prompts\csharp-mstest.prompt.md = .github\prompts\csharp-mstest.prompt.md
+		.github\prompts\dotnet-best-practices.prompt.md = .github\prompts\dotnet-best-practices.prompt.md
+		.github\prompts\dotnet-design-pattern-review.prompt.md = .github\prompts\dotnet-design-pattern-review.prompt.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
