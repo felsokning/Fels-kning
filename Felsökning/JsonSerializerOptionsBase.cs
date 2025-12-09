@@ -5,7 +5,7 @@
     /// </summary>
     public class JsonSerializerOptionsBase
     {
-        private readonly JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
+        private readonly JsonSerializerOptions jsonSerializerOptions = new()
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         };

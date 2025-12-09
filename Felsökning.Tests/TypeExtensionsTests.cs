@@ -4,6 +4,7 @@
 // </copyright>
 // <author>John Bailey</author>
 // ----------------------------------------------------------------------
+[assembly: Parallelize]
 namespace Felsökning.Tests
 {
     [ExcludeFromCodeCoverage]
@@ -35,7 +36,7 @@ namespace Felsökning.Tests
         [TestMethod]
         public void ToJsonHttpContent_ShouldThrowForNullInput()
         {
-            SampleJson sut = null;
+            SampleJson? sut = null;
 
             var result = Assert.Throws<ArgumentNullException>(() => sut.ToJsonHttpContent());
 

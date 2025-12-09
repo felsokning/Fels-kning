@@ -10,7 +10,7 @@ namespace Felsökning.Tests
     [ExcludeFromCodeCoverage]
     public class HttpExtensionsTests
     {
-        private HttpClient _httpClient;
+        private HttpClient _httpClient = new();
         private const string BaseUrl = "https://jsonplaceholder.typicode.com/todos/";
 
         [TestInitialize]

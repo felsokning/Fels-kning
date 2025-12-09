@@ -126,9 +126,9 @@ namespace Felsökning
             string[] messageStrings = this.Messages.ToArray();
             string[] hresultStrings = this.HResults.ToArray();
 
-            StringBuilder stackTraceStringBuilder = new StringBuilder();
-            StringBuilder messagesStringBuilder = new StringBuilder();
-            StringBuilder hresultsStringBuilder = new StringBuilder();
+            StringBuilder stackTraceStringBuilder = new();
+            StringBuilder messagesStringBuilder = new();
+            StringBuilder hresultsStringBuilder = new();
 
             foreach (string s in stackStrings)
             {
