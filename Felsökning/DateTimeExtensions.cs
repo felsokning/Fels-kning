@@ -33,7 +33,7 @@ namespace Felsökning
         /// <returns>A cultured string representation of the DateTime object.</returns>
         public static string ToCulturedString(this DateTime dateTime, string culture)
         {
-            CultureInfo cultureInfo = new CultureInfo(name: culture);
+            CultureInfo cultureInfo = new(name: culture);
             return dateTime.ToString(cultureInfo);
         }
 
@@ -89,7 +89,7 @@ namespace Felsökning
         /// <returns>A string representation of the DateTime object.</returns>
         public static string ToSwedishString(this DateTime dateTime)
         {
-            CultureInfo svSe = new CultureInfo(name: "sv-se");
+            CultureInfo svSe = new(name: "sv-se");
             return dateTime.ToString(svSe);
         }
 

@@ -221,7 +221,7 @@ namespace Felsökning
                     new ArgumentNullException(nameof(value)));
             }
 
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new();
             for (int c = 0; c <= value.Length - 1; c++)
             {
                 if (c == value.Length - 1)

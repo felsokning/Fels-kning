@@ -24,7 +24,7 @@ namespace Felsökning.Tests
         /// <exception cref="HttpRequestException">A response to mock exceptions thrown on request.</exception>
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            HttpResponseMessage responseMessage = new HttpResponseMessage();
+            HttpResponseMessage responseMessage = new();
 
             if (request?.RequestUri?.AbsoluteUri == "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty")
             {

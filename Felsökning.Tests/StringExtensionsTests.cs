@@ -10,7 +10,7 @@ namespace Felsökning.Tests
     [TestClass]
     public class StringExtensionsTests
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("")]
         [DataRow(" ")]
         [DataRow(null)]
@@ -36,7 +36,7 @@ namespace Felsökning.Tests
             secondResult.Should().BeTrue();
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("")]
         [DataRow(" ")]
         [DataRow(null)]
@@ -72,7 +72,7 @@ namespace Felsökning.Tests
             fourthResult.Should().BeFalse();
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("")]
         [DataRow(" ")]
         [DataRow(null)]
@@ -139,7 +139,7 @@ namespace Felsökning.Tests
             result.Should().Be("Stockholm, Brevbäring, Svarspost");
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("")]
         [DataRow(" ")]
         [DataRow(null)]
@@ -191,7 +191,7 @@ namespace Felsökning.Tests
             result.Should().BeTrue();
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("189001019802")]
         [DataRow("189001029819")]
         [DataRow("189001039800")]
@@ -429,7 +429,7 @@ namespace Felsökning.Tests
             result.Should().BeTrue();
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(new string[] { })]
         [DataRow(null)]
         public void ToArrayString_ShouldFailForNullOrEmpty(string[] sut)

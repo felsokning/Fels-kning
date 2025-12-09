@@ -84,7 +84,7 @@ namespace Felsökning
                 string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
-                    JsonSerializerOptions options = new JsonSerializerOptions();
+                    JsonSerializerOptions options = new();
                     options.Converters.Add(new JsonStringEnumConverter());
                     options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                     return JsonSerializer.Deserialize<T>(httpResponseMessageContent, options)!;
@@ -626,6 +626,7 @@ namespace Felsökning
         /// <param name="requestUrl">The URI the request is sent to.</param>
         /// <param name="stringContent">The content to be put, in string form.</param>
         /// <param name="contentType">The content type the server should be expecting.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>An awaitable <see cref="Task{T}"/></returns>
         public static async Task<T> PutAsync<T>(this HttpClient httpClient, string requestUrl, string stringContent, string contentType, CancellationToken cancellationToken = default)
         {
