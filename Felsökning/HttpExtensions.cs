@@ -81,7 +81,7 @@ namespace Felsökning
             {
                 requestId = httpClient.GenerateNewRequestId();
                 HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(requestUrl, cancellationToken);
-                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     JsonSerializerOptions options = new();
@@ -153,7 +153,7 @@ namespace Felsökning
                     Content = new StringContent(JsonSerializer.Serialize(typeObject))
                 };
                 HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(httpRequestMessage, cancellationToken);
-                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     var options = new JsonSerializerOptions();
@@ -221,7 +221,7 @@ namespace Felsökning
             {
                 requestId = httpClient.GenerateNewRequestId();
                 HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(requestUrl, httpContent, cancellationToken);
-                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     var options = new JsonSerializerOptions();
@@ -289,7 +289,7 @@ namespace Felsökning
             {
                 requestId = httpClient.GenerateNewRequestId();
                 HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(requestUrl, httpContent, cancellationToken);
-                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     var options = new JsonSerializerOptions();
@@ -360,7 +360,7 @@ namespace Felsökning
                 HttpContent httpContent = new StringContent(stringContent);
                 httpContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
                 HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(requestUrl, httpContent, cancellationToken);
-                string? httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                string? httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     var options = new JsonSerializerOptions();
@@ -429,7 +429,7 @@ namespace Felsökning
                 requestId = httpClient.GenerateNewRequestId();
                 var httpContent = new StringContent(content: JsonSerializer.Serialize(obj));
                 HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(requestUrl, httpContent, cancellationToken);
-                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     var options = new JsonSerializerOptions();
@@ -498,7 +498,7 @@ namespace Felsökning
                 requestId = httpClient.GenerateNewRequestId();
                 var httpContent = new StringContent(content: JsonSerializer.Serialize(obj));
                 HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(requestUrl, httpContent, cancellationToken);
-                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                string httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     var options = new JsonSerializerOptions();
@@ -566,7 +566,7 @@ namespace Felsökning
             {
                 requestId = httpClient.GenerateNewRequestId();
                 HttpResponseMessage httpResponseMessage = await httpClient.PutAsync(requestUri: requestUrl, content: httpContent, cancellationToken);
-                string? httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                string? httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     var options = new JsonSerializerOptions();
@@ -636,8 +636,8 @@ namespace Felsökning
                 requestId = httpClient.GenerateNewRequestId(); 
                 HttpContent httpContent = new StringContent(content: stringContent);
                 httpContent.Headers.ContentType = new MediaTypeHeaderValue(mediaType: contentType);
-                HttpResponseMessage httpResponseMessage = await httpClient.PutAsync(requestUri: requestUrl, content: httpContent);
-                string? httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                HttpResponseMessage httpResponseMessage = await httpClient.PutAsync(requestUri: requestUrl, content: httpContent, cancellationToken: cancellationToken);
+                string? httpResponseMessageContent = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     var options = new JsonSerializerOptions();

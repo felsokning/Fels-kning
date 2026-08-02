@@ -11,6 +11,11 @@ namespace Felsökning
     /// </summary>
     public static class FileExtensions
     {
+        private readonly static JsonSerializerOptions jsonSerializerOptions = new()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        };
+
         /// <summary>
         ///     Asynchronously opens a text file, reads all the text in the file, then closes the file, then converts the text to <typeparamref name="T"/>.
         /// </summary>
@@ -21,11 +26,6 @@ namespace Felsökning
         public static async Task<T> ReadAllTextAsync<T>(this IFile file, string filePath)
         {
             var textResult = await file.ReadAllTextAsync(filePath);
-            var jsonSerializerOptions = new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            };
-
             return JsonSerializer.Deserialize<T>(textResult!, jsonSerializerOptions!)!;
         }
     }

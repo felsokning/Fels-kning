@@ -16,12 +16,13 @@ namespace Felsökning
         ///     which the iteration can be awaited through.
         /// </summary>
         /// <param name="values">The current <see cref="ICollection{T}"/> context.</param>
+        /// <param name="cancellationToken">A cancellation token to cancel the asynchronous operation.</param>
         /// <returns>An awaitable <see cref="IAsyncEnumerable{T}"/>.</returns>
-        public static async IAsyncEnumerable<T> ToIAsyncEnumerable<T>(this ICollection<T> values)
+        public static async IAsyncEnumerable<T> ToIAsyncEnumerable<T>(this ICollection<T> values, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             foreach (var item in values)
             {
-                await Task.Delay(1);
+                await Task.Delay(1, cancellationToken);
                 yield return item;
             }
         }
@@ -31,12 +32,13 @@ namespace Felsökning
         ///     which the iteration can be awaited through.
         /// </summary>
         /// <param name="values">The current <see cref="ICollection{T}"/> context.</param>
+        /// <param name="cancellationToken">A cancellation token to cancel the asynchronous operation.</param>
         /// <returns>An awaitable <see cref="IAsyncEnumerable{T}"/>.</returns>
-        public static async IAsyncEnumerable<T> ToIAsyncEnumerable<T>(this IEnumerable<T> values)
+        public static async IAsyncEnumerable<T> ToIAsyncEnumerable<T>(this IEnumerable<T> values, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             foreach (var item in values)
             {
-                await Task.Delay(1);
+                await Task.Delay(1, cancellationToken);
                 yield return item;
             }
         }
@@ -46,12 +48,13 @@ namespace Felsökning
         ///     which the iteration can be awaited through.
         /// </summary>
         /// <param name="values">The current <see cref="ICollection{T}"/> context.</param>
+        /// <param name="cancellationToken">A cancellation token to cancel the asynchronous operation.</param>
         /// <returns>An awaitable <see cref="IAsyncEnumerable{T}"/>.</returns>
-        public static async IAsyncEnumerable<T> ToIAsyncEnumerable<T>(this IList<T> values)
+        public static async IAsyncEnumerable<T> ToIAsyncEnumerable<T>(this IList<T> values, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             foreach (var item in values)
             {
-                await Task.Delay(1);
+                await Task.Delay(1, cancellationToken);
                 yield return item;
             }
         }

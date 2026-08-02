@@ -12,6 +12,7 @@ namespace Felsökning.Tests
     {
         private HttpClient _httpClient = new();
         private const string BaseUrl = "https://jsonplaceholder.typicode.com/todos/";
+        public Microsoft.VisualStudio.TestTools.UnitTesting.TestContext TestContext { get; set; }
 
         [TestInitialize]
         public void Initialize()
@@ -33,7 +34,7 @@ namespace Felsökning.Tests
 
             // Act
             var content = await _httpClient
-                .PatchAsync<SampleJson>($"{BaseUrl}2", patchTarget)
+                .PatchAsync<SampleJson>($"{BaseUrl}2", patchTarget, TestContext.CancellationToken)
                 .ConfigureAwait(false);
 
             // Assert
@@ -50,7 +51,7 @@ namespace Felsökning.Tests
             // Act & Assert
             var exception = await Assert.ThrowsExactlyAsync<StatusException>(
                 async () => await _httpClient
-                    .PatchAsync<SampleJson>($"{BaseUrl}3", patchTarget)
+                    .PatchAsync<SampleJson>($"{BaseUrl}3", patchTarget, TestContext.CancellationToken)
                     .ConfigureAwait(false)
             ).ConfigureAwait(false);
 
@@ -68,7 +69,7 @@ namespace Felsökning.Tests
             // Act & Assert
             var exception = await Assert.ThrowsExactlyAsync<StatusException>(
                 async () => await _httpClient
-                    .PatchAsync<SampleJson>($"{BaseUrl}1000", patchTarget)
+                    .PatchAsync<SampleJson>($"{BaseUrl}1000", patchTarget, TestContext.CancellationToken)
                     .ConfigureAwait(false)
             ).ConfigureAwait(false);
 
@@ -87,7 +88,7 @@ namespace Felsökning.Tests
 
             // Act
             var result = await _httpClient
-                .PostAsync<SampleJson>($"{BaseUrl}1", httpContent)
+                .PostAsync<SampleJson>($"{BaseUrl}1", httpContent, TestContext.CancellationToken)
                 .ConfigureAwait(false);
 
             // Assert
@@ -104,7 +105,7 @@ namespace Felsökning.Tests
 
             // Act
             var result = await _httpClient
-                .PostAsync<SampleJson>($"{BaseUrl}1", httpContent, contentType)
+                .PostAsync<SampleJson>($"{BaseUrl}1", httpContent, contentType, TestContext.CancellationToken)
                 .ConfigureAwait(false);
 
             // Assert
@@ -122,7 +123,7 @@ namespace Felsökning.Tests
             // Act & Assert
             var exception = await Assert.ThrowsExactlyAsync<StatusException>(
                 async () => await _httpClient
-                    .PostAsync<SampleJson>($"{BaseUrl}3", httpContent, contentType)
+                    .PostAsync<SampleJson>($"{BaseUrl}3", httpContent, contentType, TestContext.CancellationToken)
                     .ConfigureAwait(false)
             ).ConfigureAwait(false);
 
@@ -139,7 +140,7 @@ namespace Felsökning.Tests
 
             // Act
             var result = await _httpClient
-                .PostAsync<SampleJson, SampleJson>($"{BaseUrl}1", postTarget)
+                .PostAsync<SampleJson, SampleJson>($"{BaseUrl}1", postTarget, TestContext.CancellationToken)
                 .ConfigureAwait(false);
 
             // Assert

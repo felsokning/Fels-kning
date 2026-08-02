@@ -3,6 +3,7 @@ global using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 global using System;
 global using System.Collections.ObjectModel;
+global using System.Diagnostics;
 global using System.Diagnostics.CodeAnalysis;
 global using System.IO.Abstractions.TestingHelpers;
 global using System.Net;

@@ -66,7 +66,7 @@ namespace Felsökning
             this.StackTraces.Clear();
             this.Messages.Clear();
             this.HResults.Clear();
-            this.ReturnStrings = new string[] { };
+            this.ReturnStrings = Array.Empty<string>();
             GC.ReRegisterForFinalize(this.StackTraces);
             GC.ReRegisterForFinalize(this.Messages);
             GC.ReRegisterForFinalize(this.HResults);

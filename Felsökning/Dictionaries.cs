@@ -13,6 +13,11 @@ namespace Felsökning
     [ExcludeFromCodeCoverage]
     internal sealed class Dictionaries : IDisposable
     {
+        private readonly string norraHallandsOchVastraGotalandsLan = "Norra Hallands Och Västra Götalands län";
+        private readonly string norraStorStockholm = "Norra Stor Stockholm";
+        private readonly string norraVastraGotalandsOchVarmlandsLan = "Norra Västra Götalands och Värmlands län";
+        private readonly string sodraStorStockholm = "Södra Stor Stockholm";
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Dictionaries"/> class.
         /// </summary>
@@ -23,14 +28,14 @@ namespace Felsökning
                 // Digits less than 10 are not allowed for city codes.
                 { 10, "Stockholm" },
                 { 11, "Stockholm" },
-                { 12, "Södra Stor Stockholm" },
-                { 13, "Södra Stor Stockholm" },
-                { 14, "Södra Stor Stockholm" },
-                { 15, "Södra Stor Stockholm" },
-                { 16, "Norra Stor Stockholm" },
-                { 17, "Norra Stor Stockholm" },
-                { 18, "Norra Stor Stockholm" },
-                { 19, "Norra Stor Stockholm" },
+                { 12, sodraStorStockholm },
+                { 13, sodraStorStockholm },
+                { 14, sodraStorStockholm },
+                { 15, sodraStorStockholm },
+                { 16, norraStorStockholm },
+                { 17, norraStorStockholm },
+                { 18, norraStorStockholm },
+                { 19, norraStorStockholm },
                 { 20, "Malmö Box- och företagsadresser" },
                 { 21, "Malmö Gatuadresser" },
                 { 22, "Lund" },
@@ -52,12 +57,12 @@ namespace Felsökning
                 { 39, "Kalmar" },
                 { 40, "Göteborg Box- och företagsadresser" },
                 { 41, "Göteborg Gatuadresser" },
-                { 42, "Norra Hallands Och Västra Götalands län" },
-                { 43, "Norra Hallands Och Västra Götalands län" },
-                { 44, "Norra Hallands Och Västra Götalands län" },
-                { 45, "Norra Hallands Och Västra Götalands län" },
-                { 46, "Norra Hallands Och Västra Götalands län" },
-                { 47, "Norra Hallands Och Västra Götalands län" },
+                { 42, norraHallandsOchVastraGotalandsLan },
+                { 43, norraHallandsOchVastraGotalandsLan },
+                { 44, norraHallandsOchVastraGotalandsLan },
+                { 45, norraHallandsOchVastraGotalandsLan },
+                { 46, norraHallandsOchVastraGotalandsLan },
+                { 47, norraHallandsOchVastraGotalandsLan },
                 { 50, "Borås" },
                 { 51, "Södra Västra Götalands län" },
                 { 52, "ÖstraVästraGötalands län" },
@@ -74,9 +79,9 @@ namespace Felsökning
                 { 63, "Eskilstuna" },
                 { 64, "Norra Södermanlands län" },
                 { 65, "Karlstad " },
-                { 66, "Norra Västra Götalands och Värmlands län" },
-                { 67, "Norra Västra Götalands och Värmlands län" },
-                { 68, "Norra Västra Götalands och Värmlands län" },
+                { 66, norraVastraGotalandsOchVarmlandsLan },
+                { 67, norraVastraGotalandsOchVarmlandsLan },
+                { 68, norraVastraGotalandsOchVarmlandsLan },
                 { 69, "Södra Örebro län" },
                 { 70, "Örebro" },
                 { 71, "Norra Örebro län" },

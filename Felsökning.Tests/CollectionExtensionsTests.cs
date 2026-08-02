@@ -18,6 +18,8 @@ namespace Felsökning.Tests
     {
         private static IEnumerable<int> TestData => new[] { 1, 2, 3, 4 };
 
+        public Microsoft.VisualStudio.TestTools.UnitTesting.TestContext TestContext { get; set; }
+
         [TestMethod]
         [TestCategory("AsyncEnumerable")]
         [Description("Verifies that a List can be converted to IAsyncEnumerable")]
@@ -27,7 +29,7 @@ namespace Felsökning.Tests
             var sut = new List<int>(TestData);
 
             // Act
-            var results = sut.ToIAsyncEnumerable<int>();
+            var results = sut.ToIAsyncEnumerable<int>(TestContext.CancellationToken);
 
             // Assert
             results.Should().NotBeNull("IAsyncEnumerable should be created");
@@ -49,7 +51,7 @@ namespace Felsökning.Tests
             var sut = (ICollection<int>)collection;
 
             // Act
-            var results = sut.ToIAsyncEnumerable<int>();
+            var results = sut.ToIAsyncEnumerable<int>(TestContext.CancellationToken);
 
             // Assert
             results.Should().NotBeNull("IAsyncEnumerable should be created");
@@ -70,7 +72,7 @@ namespace Felsökning.Tests
             var sut = TestData;
 
             // Act
-            var results = sut.ToIAsyncEnumerable();
+            var results = sut.ToIAsyncEnumerable(TestContext.CancellationToken);
 
             // Assert
             results.Should().NotBeNull("IAsyncEnumerable should be created");
