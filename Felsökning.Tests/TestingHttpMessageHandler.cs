@@ -131,14 +131,26 @@ namespace Felsökning.Tests
                 }
 
                 // Invalid resource returns NotFound
-                if (url == "https://jsonplaceholder.typicode.com/todos/3")
-                {
-                    responseMessage = new HttpResponseMessage(HttpStatusCode.NotFound);
-                    responseMessage.StatusCode = HttpStatusCode.NotFound;
-                    responseMessage.Content = new StringContent("The resource didn't exist, yo.");
-                    return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
+                    if (url == "https://jsonplaceholder.typicode.com/todos/3")
+                    {
+                        responseMessage = new HttpResponseMessage(HttpStatusCode.NotFound);
+                        responseMessage.StatusCode = HttpStatusCode.NotFound;
+                        responseMessage.Content = new StringContent("The resource didn't exist, yo.");
+                        return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
+                    }
+
+                    // PostAsync with HttpRequestException (no StatusCode) - covers the null branch in catch block
+                    if (url == "https://jsonplaceholder.typicode.com/todos/999")
+                    {
+                        throw new HttpRequestException("Connection refused");
+                    }
+
+                    // PostAsync with HttpRequestException (with StatusCode) - covers the non-null branch in catch block
+                    if (url == "https://jsonplaceholder.typicode.com/todos/1001")
+                    {
+                        throw new HttpRequestException("Service Unavailable", null, HttpStatusCode.ServiceUnavailable);
+                    }
                 }
-            }
 
             // ===== PUT request handlers =====
             if (request?.Method == HttpMethod.Put)
