@@ -27,6 +27,41 @@ namespace Felsökning.Tests
         }
 
         [TestMethod]
+        public async Task AddNewRequestId_ShouldAddRequestIdHeaderToHttpClient()
+        {
+            // Arrange
+            var requestId = Guid.NewGuid().ToString();
+            // Act
+            _httpClient.AddNewRequestId(requestId);
+            // Assert
+            _httpClient.DefaultRequestHeaders.Should().ContainSingle(
+                header => header.Key == "X-Request-ID" && header.Value.Contains(requestId),
+                "The X-Request-ID header should be added with the correct value."
+            );
+        }
+
+        [TestMethod]
+        public async Task AddHeaders_ShouldAddEachKeyValuePairToHttpClient()
+        {
+            var dictionary = new Dictionary<string, string>
+            {
+                { "Header1", "Value1" },
+                { "Header2", "Value2" }
+            };
+
+            _httpClient.AddHeaders(dictionary);
+
+            _httpClient.DefaultRequestHeaders.Should().ContainSingle(
+                header => header.Key == "Header1" && header.Value.Contains("Value1"),
+                "The Header1 should be added with the correct value."
+            );
+            _httpClient.DefaultRequestHeaders.Should().ContainSingle(
+                header => header.Key == "Header2" && header.Value.Contains("Value2"),
+                "The Header2 should be added with the correct value."
+            );
+        }
+
+        [TestMethod]
         public async Task PatchAsync_WithValidData_ReturnsSuccessfulResponse()
         {
             // Arrange
@@ -145,6 +180,29 @@ namespace Felsökning.Tests
 
             // Assert
             VerifySuccessfulPostResponse(result);
+        }
+
+        [TestMethod]
+        public async Task RemoveHeader_ShouldRemoveTheHeaders()
+        {
+            // Arrange
+            var headersToAdd = new Dictionary<string, string>
+            {
+                { "Header1", "Value1" },
+                { "Header2", "Value2" }
+            };
+            _httpClient.AddHeaders(headersToAdd);
+            // Act
+            _httpClient.RemoveHeader("Header1");
+            // Assert
+            _httpClient.DefaultRequestHeaders.Should().NotContain(
+                header => header.Key == "Header1",
+                "The Header1 should be removed."
+            );
+            _httpClient.DefaultRequestHeaders.Should().Contain(
+                header => header.Key == "Header2",
+                "The Header2 should not be removed."
+            );
         }
 
         private static void VerifySuccessfulPostResponse(SampleJson result)
