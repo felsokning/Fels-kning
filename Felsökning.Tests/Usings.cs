@@ -5,6 +5,7 @@ global using System;
 global using System.Collections.ObjectModel;
 global using System.Diagnostics;
 global using System.Diagnostics.CodeAnalysis;
+global using System.Globalization;
 global using System.IO.Abstractions.TestingHelpers;
 global using System.Net;
 global using System.Net.Http.Headers;

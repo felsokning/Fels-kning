@@ -53,34 +53,115 @@ namespace Felsökning.Tests
                 return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
             }
 
-            if (request?.RequestUri?.AbsoluteUri == "https://jsonplaceholder.typicode.com/todos/1")
+            // ===== PATCH request handlers =====
+            if (request?.Method == HttpMethod.Patch)
             {
-                responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
-                responseMessage.StatusCode = HttpStatusCode.OK;
-                responseMessage.Content = new StringContent(JsonSerializer.Serialize(new SampleJson
+                // Success case for PATCH /todos/1
+                if (request?.RequestUri?.AbsoluteUri == "https://jsonplaceholder.typicode.com/todos/1")
                 {
-                    Completed = true,
-                    Id = 8675309,
-                    Title = "Super Secret and Diabolical Plans",
-                    UserId = 24
-                }));
+                    responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+                    responseMessage.StatusCode = HttpStatusCode.OK;
+                    responseMessage.Content = new StringContent(JsonSerializer.Serialize(new SampleJson
+                    {
+                        Completed = true,
+                        Id = 8675309,
+                        Title = "Super Secret and Diabolical Plans",
+                        UserId = 24
+                    }));
 
-                return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
+                    return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
+                }
+
+                // Success case for PATCH /todos/2
+                if (request?.RequestUri?.AbsoluteUri == "https://jsonplaceholder.typicode.com/todos/2")
+                {
+                    responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+                    responseMessage.StatusCode = HttpStatusCode.OK;
+                    responseMessage.Content = new StringContent(JsonSerializer.Serialize(new SampleJson
+                    {
+                        Completed = true,
+                        Id = 8675309,
+                        Title = "Super Secret and Diabolical Plans",
+                        UserId = 24
+                    }));
+
+                    return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
+                }
             }
 
-            if (request?.RequestUri?.AbsoluteUri == "https://jsonplaceholder.typicode.com/todos/2")
+            // ===== GET request handlers =====
+            if (request?.Method == HttpMethod.Get)
             {
-                responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
-                responseMessage.StatusCode = HttpStatusCode.OK;
-                responseMessage.Content = new StringContent(JsonSerializer.Serialize(new SampleJson
+                // Success case for GET /todos/1
+                string url = request.RequestUri.AbsoluteUri;
+                if (url == "https://jsonplaceholder.typicode.com/todos/1")
                 {
-                    Completed = true,
-                    Id = 8675309,
-                    Title = "Super Secret and Diabolical Plans",
-                    UserId = 24
-                }));
+                    responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+                    responseMessage.StatusCode = HttpStatusCode.OK;
+                    string jsonContent = "{\r\n  \"userId\": 1,\r\n  \"id\": 1,\r\n  \"title\": \"delectus aut autem\",\r\n  \"completed\": false\r\n}";
+                    responseMessage.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                    return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
+                }
 
-                return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
+                // Non-existent resource returns HttpRequestException with StatusCode for GetAsync to wrap in StatusException
+                if (url == "https://jsonplaceholder.typicode.com/todos/1000")
+                {
+                    throw new HttpRequestException("Resource Not Found", null, HttpStatusCode.NotFound);
+                }
+            }
+
+            // ===== POST request handlers =====
+            if (request?.Method == HttpMethod.Post)
+            {
+                string url = request.RequestUri.AbsoluteUri;
+                // Success case for POST /todos/1 - returns 201 Created with test data
+                if (url == "https://jsonplaceholder.typicode.com/todos/1")
+                {
+                    responseMessage = new HttpResponseMessage(HttpStatusCode.Created);
+                    responseMessage.StatusCode = HttpStatusCode.Created;
+                    string jsonContent = JsonSerializer.Serialize(new SampleJson
+                    {
+                        Completed = true,
+                        Id = 8675309,
+                        Title = "Super Secret and Diabolical Plans",
+                        UserId = 24
+                    });
+                    responseMessage.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                    return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
+                }
+
+                // Invalid resource returns NotFound
+                if (url == "https://jsonplaceholder.typicode.com/todos/3")
+                {
+                    responseMessage = new HttpResponseMessage(HttpStatusCode.NotFound);
+                    responseMessage.StatusCode = HttpStatusCode.NotFound;
+                    responseMessage.Content = new StringContent("The resource didn't exist, yo.");
+                    return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
+                }
+            }
+
+            // ===== PUT request handlers =====
+            if (request?.Method == HttpMethod.Put)
+            {
+                string url = request.RequestUri.AbsoluteUri;
+                // Success case for PUT /todos/1 - returns 200 OK with updated data
+                if (url == "https://jsonplaceholder.typicode.com/todos/1")
+                {
+                    responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+                    responseMessage.StatusCode = HttpStatusCode.OK;
+                    string jsonContent = "{\r\n  \"userId\": 1,\r\n  \"id\": 1,\r\n  \"title\": \"updated title\",\r\n  \"completed\": true\r\n}";
+                    responseMessage.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                    return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
+                }
+
+                // Non-existent resource for PUT - returns NotFound with meaningful content
+                if (url == "https://jsonplaceholder.typicode.com/todos/notfound")
+                {
+                    responseMessage = new HttpResponseMessage(HttpStatusCode.NotFound);
+                    responseMessage.StatusCode = HttpStatusCode.NotFound;
+                    responseMessage.Content = new StringContent("The resource didn't exist, yo.");
+                    return Task<HttpResponseMessage>.Factory.StartNew(() => responseMessage, cancellationToken);
+                }
             }
 
             if (request?.RequestUri?.AbsoluteUri == "https://jsonplaceholder.typicode.com/todos/3")
