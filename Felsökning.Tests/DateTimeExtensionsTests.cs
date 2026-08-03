@@ -139,6 +139,7 @@ namespace Felsökning.Tests
             Assert.AreEqual(41, weekNumber);
         }
 
+#pragma warning disable SYSLIB1045 // Disable use 'GeneratedRegexAttribute' to generate the regular expression implementation at compile-time. Generated RegexAttribute is available in .NET 7.0 and later versions. It is also included in code coverage analysis, so it is not recommended to use it in unit tests.
         [TestMethod]
         public void ValidateSwedishStringIsLocalised()
         {
@@ -168,5 +169,6 @@ namespace Felsökning.Tests
             string culturedString = now.ToCulturedString("pt-BR");
             Assert.IsTrue(Regex.IsMatch(culturedString, @"^[0-9][0-9]/[0-1][0-9]/[1-2][0-9][0-9][0-9] [0-2][0-9]:[0-6][0-9]:[0-5][0-9]$"));
         }
+#pragma warning restore SYSLIB1045 // Restore the warning for other uses of the regex
     }
 }

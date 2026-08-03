@@ -4,14 +4,14 @@
 // </copyright>
 // <author>John Bailey</author>
 // ----------------------------------------------------------------------
-using System.Diagnostics;
-
 namespace Felsökning.Tests
 {
     [TestClass]
     [ExcludeFromCodeCoverage]
     public class IAsyncEnumerableExtensionsTests
     {
+        public Microsoft.VisualStudio.TestTools.UnitTesting.TestContext TestContext { get; set; }
+
         [TestMethod]
         public async Task FindAsync_WhenValueDoesNotExist_ReturnsDefault()
         {
@@ -20,7 +20,7 @@ namespace Felsökning.Tests
 
             // Act
             var result = await numbers
-                .ToIAsyncEnumerable()
+                .ToIAsyncEnumerable(TestContext.CancellationToken)
                 .FindAsync(x => x == 100)
                 .ConfigureAwait(false);
 
@@ -36,7 +36,7 @@ namespace Felsökning.Tests
 
             // Act
             var result = await numbers
-                .ToIAsyncEnumerable()
+                .ToIAsyncEnumerable(TestContext.CancellationToken)
                 .FindAsync(x => x == 0)
                 .ConfigureAwait(false);
 
@@ -52,7 +52,7 @@ namespace Felsökning.Tests
 
             // Act
             await numbers
-                .ToIAsyncEnumerable()
+                .ToIAsyncEnumerable(TestContext.CancellationToken)
                 .ForEachAsync<int>(x => { Debug.WriteLine(x); })
                 .ConfigureAwait(false);
 
@@ -69,7 +69,7 @@ namespace Felsökning.Tests
             // Act & Assert
             var exception = await Assert.ThrowsExactlyAsync<InvalidOperationException>(
                 async () => await numbers
-                    .ToIAsyncEnumerable()
+                    .ToIAsyncEnumerable(TestContext.CancellationToken)
                     .ForEachAsync<int>(x => 
                     { 
                         if (x == 2)
@@ -93,14 +93,14 @@ namespace Felsökning.Tests
 
             // Act
             var addedAsyncEnumerable = numbers
-                .ToIAsyncEnumerable()
+                .ToIAsyncEnumerable(TestContext.CancellationToken)
                 .ForEachAsync<int, int>(x => x + 3);
 
             // Assert
             addedAsyncEnumerable.Should().NotBeNull();
             
             // Use using statement for proper disposal
-            await using var enumerator = addedAsyncEnumerable.GetAsyncEnumerator();
+            await using var enumerator = addedAsyncEnumerable.GetAsyncEnumerator(TestContext.CancellationToken);
             
             for (var i = 0; i < expectedValues.Length; i++)
             {
@@ -122,11 +122,11 @@ namespace Felsökning.Tests
             var list = new List<string> { "testing", "something", "here" };
 
             // Act
-            var filteredResult = list.ToIAsyncEnumerable().WhereAsync(x => x == searchTerm);
+            var filteredResult = list.ToIAsyncEnumerable(TestContext.CancellationToken).WhereAsync(x => x == searchTerm);
             
             // Assert
             filteredResult.Should().NotBeNull();
-            var results = await filteredResult.ToListAsync().ConfigureAwait(false);
+            var results = await filteredResult.ToListAsync(TestContext.CancellationToken).ConfigureAwait(false);
             
             results.Count.Should().Be(expectedCount);
             if (shouldFind)

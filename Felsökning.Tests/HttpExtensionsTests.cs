@@ -12,6 +12,7 @@ namespace Felsökning.Tests
     {
         private HttpClient _httpClient = new();
         private const string BaseUrl = "https://jsonplaceholder.typicode.com/todos/";
+        public Microsoft.VisualStudio.TestTools.UnitTesting.TestContext TestContext { get; set; }
 
         [TestInitialize]
         public void Initialize()
@@ -26,6 +27,41 @@ namespace Felsökning.Tests
         }
 
         [TestMethod]
+        public async Task AddNewRequestId_ShouldAddRequestIdHeaderToHttpClient()
+        {
+            // Arrange
+            var requestId = Guid.NewGuid().ToString();
+            // Act
+            _httpClient.AddNewRequestId(requestId);
+            // Assert
+            _httpClient.DefaultRequestHeaders.Should().ContainSingle(
+                header => header.Key == "X-Request-ID" && header.Value.Contains(requestId),
+                "The X-Request-ID header should be added with the correct value."
+            );
+        }
+
+        [TestMethod]
+        public async Task AddHeaders_ShouldAddEachKeyValuePairToHttpClient()
+        {
+            var dictionary = new Dictionary<string, string>
+            {
+                { "Header1", "Value1" },
+                { "Header2", "Value2" }
+            };
+
+            _httpClient.AddHeaders(dictionary);
+
+            _httpClient.DefaultRequestHeaders.Should().ContainSingle(
+                header => header.Key == "Header1" && header.Value.Contains("Value1"),
+                "The Header1 should be added with the correct value."
+            );
+            _httpClient.DefaultRequestHeaders.Should().ContainSingle(
+                header => header.Key == "Header2" && header.Value.Contains("Value2"),
+                "The Header2 should be added with the correct value."
+            );
+        }
+
+        [TestMethod]
         public async Task PatchAsync_WithValidData_ReturnsSuccessfulResponse()
         {
             // Arrange
@@ -33,7 +69,7 @@ namespace Felsökning.Tests
 
             // Act
             var content = await _httpClient
-                .PatchAsync<SampleJson>($"{BaseUrl}2", patchTarget)
+                .PatchAsync<SampleJson>($"{BaseUrl}2", patchTarget, TestContext.CancellationToken)
                 .ConfigureAwait(false);
 
             // Assert
@@ -50,7 +86,7 @@ namespace Felsökning.Tests
             // Act & Assert
             var exception = await Assert.ThrowsExactlyAsync<StatusException>(
                 async () => await _httpClient
-                    .PatchAsync<SampleJson>($"{BaseUrl}3", patchTarget)
+                    .PatchAsync<SampleJson>($"{BaseUrl}3", patchTarget, TestContext.CancellationToken)
                     .ConfigureAwait(false)
             ).ConfigureAwait(false);
 
@@ -68,7 +104,7 @@ namespace Felsökning.Tests
             // Act & Assert
             var exception = await Assert.ThrowsExactlyAsync<StatusException>(
                 async () => await _httpClient
-                    .PatchAsync<SampleJson>($"{BaseUrl}1000", patchTarget)
+                    .PatchAsync<SampleJson>($"{BaseUrl}1000", patchTarget, TestContext.CancellationToken)
                     .ConfigureAwait(false)
             ).ConfigureAwait(false);
 
@@ -87,7 +123,7 @@ namespace Felsökning.Tests
 
             // Act
             var result = await _httpClient
-                .PostAsync<SampleJson>($"{BaseUrl}1", httpContent)
+                .PostAsync<SampleJson>($"{BaseUrl}1", httpContent, TestContext.CancellationToken)
                 .ConfigureAwait(false);
 
             // Assert
@@ -104,7 +140,7 @@ namespace Felsökning.Tests
 
             // Act
             var result = await _httpClient
-                .PostAsync<SampleJson>($"{BaseUrl}1", httpContent, contentType)
+                .PostAsync<SampleJson>($"{BaseUrl}1", httpContent, contentType, TestContext.CancellationToken)
                 .ConfigureAwait(false);
 
             // Assert
@@ -122,7 +158,7 @@ namespace Felsökning.Tests
             // Act & Assert
             var exception = await Assert.ThrowsExactlyAsync<StatusException>(
                 async () => await _httpClient
-                    .PostAsync<SampleJson>($"{BaseUrl}3", httpContent, contentType)
+                    .PostAsync<SampleJson>($"{BaseUrl}3", httpContent, contentType, TestContext.CancellationToken)
                     .ConfigureAwait(false)
             ).ConfigureAwait(false);
 
@@ -139,11 +175,292 @@ namespace Felsökning.Tests
 
             // Act
             var result = await _httpClient
-                .PostAsync<SampleJson, SampleJson>($"{BaseUrl}1", postTarget)
+                .PostAsync<SampleJson, SampleJson>($"{BaseUrl}1", postTarget, TestContext.CancellationToken)
                 .ConfigureAwait(false);
 
             // Assert
             VerifySuccessfulPostResponse(result);
+        }
+
+        [TestMethod]
+        public async Task PostAsync_WithHttpContent_ThrowsStatusException_WhenHttpRequestExceptionThrown()
+        {
+            // Arrange
+            var postTarget = new SampleJson();
+            var httpContent = new StringContent(JsonSerializer.Serialize(postTarget));
+
+            // Act & Assert
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(
+                async () => await _httpClient
+                    .PostAsync<SampleJson>("https://jsonplaceholder.typicode.com/todos/999", httpContent, TestContext.CancellationToken)
+                    .ConfigureAwait(false)
+            ).ConfigureAwait(false);
+
+            exception.Should().BeOfType<StatusException>();
+            exception.Message.Should().Contain("Connection refused");
+            exception.InnerException.Should().BeOfType<HttpRequestException>();
+        }
+
+        [TestMethod]
+        public async Task PostAsync_WithGenericTypes_ThrowsStatusException_WhenHttpRequestExceptionWithStatusCodeThrown()
+        {
+            // Arrange
+            var postTarget = new SampleJson();
+
+            // Act & Assert
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(
+                async () => await _httpClient
+                    .PostAsync<SampleJson, SampleJson>("https://jsonplaceholder.typicode.com/todos/1001", postTarget, TestContext.CancellationToken)
+                    .ConfigureAwait(false)
+            ).ConfigureAwait(false);
+
+            exception.Should().BeOfType<StatusException>();
+            exception.Message.Should().NotBeNull();
+        }
+
+        //private static void VerifySuccessfulPostResponse(SampleJson result)
+        //{
+        //    result.Should().NotBeNull();
+        //    result.Completed.Should().BeTrue();
+        //    result.Id.Should().Be(8675309);
+        //    result.Title.Should().Be("Super Secret and Diabolical Plans");
+        //    result.UserId.Should().Be(24);
+        //}
+
+        [TestMethod]
+        public async Task PostAsync_WithUriAndHttpContent_ReturnsSuccessfulResponse()
+        {
+            // Arrange
+            var postTarget = new SampleJson();
+            var httpContent = new StringContent(JsonSerializer.Serialize(postTarget));
+            var requestUri = new Uri($"{BaseUrl}1");
+
+            // Act
+            var result = await _httpClient
+                .PostAsync<SampleJson>(requestUri, httpContent, TestContext.CancellationToken)
+                .ConfigureAwait(false);
+
+            // Assert
+            VerifySuccessfulPostResponse(result);
+        }
+
+        [TestMethod]
+        public async Task PostAsync_WithUriAndHttpContent_ThrowsStatusException_WhenHttpRequestExceptionThrown()
+        {
+            // Arrange
+            var postTarget = new SampleJson();
+            var httpContent = new StringContent(JsonSerializer.Serialize(postTarget));
+            var requestUri = new Uri("https://jsonplaceholder.typicode.com/todos/999");
+
+            // Act & Assert
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(
+                async () => await _httpClient
+                    .PostAsync<SampleJson>(requestUri, httpContent, TestContext.CancellationToken)
+                    .ConfigureAwait(false)
+            ).ConfigureAwait(false);
+
+            exception.Should().BeOfType<StatusException>();
+            exception.Message.Should().Contain("Connection refused");
+            exception.InnerException.Should().BeOfType<HttpRequestException>();
+        }
+
+        [TestMethod]
+        public async Task PostAsync_WithUriAndObject_ReturnsSuccessfulResponse()
+        {
+            // Arrange
+            var postTarget = new SampleJson();
+            var requestUri = new Uri($"{BaseUrl}1");
+
+            // Act
+            var result = await _httpClient
+                .PostAsync<SampleJson, SampleJson>(requestUri, postTarget, TestContext.CancellationToken)
+                .ConfigureAwait(false);
+
+            // Assert
+            VerifySuccessfulPostResponse(result);
+        }
+
+        [TestMethod]
+        public async Task PostAsync_WithUriAndObject_ThrowsStatusException_WhenHttpRequestExceptionThrown()
+        {
+            // Arrange
+            var postTarget = new SampleJson();
+            var requestUri = new Uri("https://jsonplaceholder.typicode.com/todos/1001");
+
+            // Act & Assert
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(
+                async () => await _httpClient
+                    .PostAsync<SampleJson, SampleJson>(requestUri, postTarget, TestContext.CancellationToken)
+                    .ConfigureAwait(false)
+            ).ConfigureAwait(false);
+
+            exception.Should().BeOfType<StatusException>();
+            exception.Message.Should().NotBeNull();
+        }
+
+        [TestMethod]
+        public async Task RemoveHeader_ShouldRemoveTheHeaders()
+        {
+            // Arrange
+            var headersToAdd = new Dictionary<string, string>
+            {
+                { "Header1", "Value1" },
+                { "Header2", "Value2" }
+            };
+            _httpClient.AddHeaders(headersToAdd);
+            // Act
+            _httpClient.RemoveHeader("Header1");
+            // Assert
+            _httpClient.DefaultRequestHeaders.Should().NotContain(
+                header => header.Key == "Header1",
+                "The Header1 should be removed."
+            );
+            _httpClient.DefaultRequestHeaders.Should().Contain(
+                header => header.Key == "Header2",
+                "The Header2 should not be removed."
+            );
+        }
+
+        private static void VerifySuccessfulGetResult(SampleJson result)
+        {
+            result.Should().NotBeNull();
+            result.Title.Should().Be("delectus aut autem");
+            result.Completed.Should().BeFalse();
+            result.Id.Should().Be(1);
+            result.UserId.Should().Be(1);
+        }
+
+        [TestMethod]
+        public async Task GetAsync_WithValidResource_ReturnsSuccessfulResult()
+        {
+            // Arrange
+            var requestUrl = $"{BaseUrl}1";
+
+            // Act
+            var result = await _httpClient
+                .GetAsync<SampleJson>(requestUrl, TestContext.CancellationToken)
+                .ConfigureAwait(false);
+
+            // Assert
+            VerifySuccessfulGetResult(result);
+        }
+
+        [TestMethod]
+        public async Task GetAsync_WithNonExistentResource_ThrowsStatusExceptionWithInnerException()
+        {
+            // Arrange
+            var requestUrl = $"{BaseUrl}1000";
+
+            // Act & Assert
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(
+                async () => await _httpClient
+                    .GetAsync<SampleJson>(requestUrl, TestContext.CancellationToken)
+                    .ConfigureAwait(false)
+            ).ConfigureAwait(false);
+
+            exception.Should().BeOfType<StatusException>();
+            exception.Message.Should().Be("Invalid status given in response: NotFound - Resource Not Found from 'https://jsonplaceholder.typicode.com/todos/1000'");
+            exception.InnerException.Should().BeOfType<HttpRequestException>()
+                .Which.Message.Should().Be("Resource Not Found");
+        }
+
+        [TestMethod]
+        public async Task PutAsync_WithValidStringContent_ReturnsSuccessfulResult()
+        {
+            // Arrange
+            var updatedTodo = new SampleJson
+            {
+                UserId = 1,
+                Id = 1,
+                Title = "updated title",
+                Completed = true
+            };
+            var jsonContent = JsonSerializer.Serialize(updatedTodo);
+            var contentType = "application/json";
+
+            // Act
+            var result = await _httpClient
+                .PutAsync<SampleJson>($"{BaseUrl}1", jsonContent, contentType, TestContext.CancellationToken)
+                .ConfigureAwait(false);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Title.Should().Be("updated title");
+            result.Completed.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public async Task PutAsync_WithInvalidResource_ThrowsStatusException()
+        {
+            // Arrange
+            var updatedTodo = new SampleJson
+            {
+                UserId = 1,
+                Id = 1,
+                Title = "updated title",
+                Completed = true
+            };
+            var jsonContent = JsonSerializer.Serialize(updatedTodo);
+            var contentType = "application/json";
+
+            // Act & Assert
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(
+                async () => await _httpClient
+                    .PutAsync<SampleJson>($"{BaseUrl}notfound", jsonContent, contentType, TestContext.CancellationToken)
+                    .ConfigureAwait(false)
+            ).ConfigureAwait(false);
+
+            exception.Should().BeOfType<StatusException>();
+            exception.Message.Should().Be("Invalid status response received. Status: Received NotFound - Not Found from 'https://jsonplaceholder.typicode.com/todos/notfound'. Message: The resource didn't exist, yo.");
+            exception.InnerException.Should().BeNull();
+        }
+
+        [TestMethod]
+        public async Task PutAsync_WithHttpContent_ReturnsSuccessfulResult()
+        {
+            // Arrange
+            var updatedTodo = new SampleJson
+            {
+                UserId = 1,
+                Id = 1,
+                Title = "updated title via HttpContent",
+                Completed = true
+            };
+            var httpContent = new StringContent(JsonSerializer.Serialize(updatedTodo), Encoding.UTF8, "application/json");
+
+            // Act
+            var result = await _httpClient
+                .PutAsync<SampleJson>($"{BaseUrl}1", httpContent, TestContext.CancellationToken)
+                .ConfigureAwait(false);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Title.Should().Be("updated title");
+            result.Completed.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public async Task PutAsync_ThrowsStatusException_WhenHttpRequestExceptionThrown()
+        {
+            // Arrange
+            var updatedTodo = new SampleJson
+            {
+                UserId = 1,
+                Id = 1,
+                Title = "updated title",
+                Completed = true
+            };
+            var httpContent = new StringContent(JsonSerializer.Serialize(updatedTodo), Encoding.UTF8, "application/json");
+
+            // Act & Assert
+            var exception = await Assert.ThrowsExactlyAsync<StatusException>(
+                async () => await _httpClient
+                    .PutAsync<SampleJson>($"{BaseUrl}999999", httpContent, TestContext.CancellationToken)
+                    .ConfigureAwait(false)
+            ).ConfigureAwait(false);
+
+            exception.Should().BeOfType<StatusException>();
+            exception.InnerException.Should().BeOfType<HttpRequestException>();
         }
 
         private static void VerifySuccessfulPostResponse(SampleJson result)

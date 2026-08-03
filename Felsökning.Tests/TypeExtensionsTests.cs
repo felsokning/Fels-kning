@@ -11,6 +11,8 @@ namespace Felsökning.Tests
     [TestClass]
     public class TypeExtensionsTests
     {
+        public Microsoft.VisualStudio.TestTools.UnitTesting.TestContext TestContext { get; set; }
+
         [TestMethod]
         public async Task TypeExtensions_Should_ReturnDesiredHttpContent()
         {
@@ -27,7 +29,7 @@ namespace Felsökning.Tests
             result.Should().NotBeNull();
             result.Headers.ContentType.Should().BeEquivalentTo(new MediaTypeHeaderValue("application/json"));
 
-            var contentString = await result.ReadAsStringAsync();
+            var contentString = await result.ReadAsStringAsync(TestContext.CancellationToken);
 
             contentString.Should().NotBeNullOrWhiteSpace();
             contentString.Should().Be("{\"userId\":444,\"id\":8675309,\"title\":\"A Test Title\",\"completed\":true}");

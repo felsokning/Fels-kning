@@ -11,6 +11,9 @@ namespace Felsökning
     /// </summary>
     public static class StringExtensions
     {
+        private const string NullOrEmptyWhitespaceMessage = "The given string was either null, empty, or whitespace";
+        private static TimeSpan RegexTimeOut = TimeSpan.FromSeconds(5);
+
         /// <summary>
         ///     Extends the <see cref="string"/> object to try to return details for a given Swedish postnummer.
         /// </summary>
@@ -160,13 +163,13 @@ namespace Felsökning
                 if (value.Contains('-'))
                 {
                     string pattern = "-";
-                    value = Regex.Replace(input: value, pattern: pattern, replacement: string.Empty);
+                    value = Regex.Replace(input: value, pattern: pattern, replacement: string.Empty, default, RegexTimeOut);
                 }
 
                 if (value.Contains('+'))
                 {
                     string pattern = "\\+";
-                    value = Regex.Replace(input: value, pattern: pattern, replacement: string.Empty);
+                    value = Regex.Replace(input: value, pattern: pattern, replacement: string.Empty, default, RegexTimeOut);
                 }
             }
 
@@ -217,7 +220,7 @@ namespace Felsökning
             if (value == null || value.Length == 0)
             {
                 throw new StatusException(
-                    "The given string was either null, empty, or whitespace",
+                    NullOrEmptyWhitespaceMessage,
                     new ArgumentNullException(nameof(value)));
             }
 
@@ -247,8 +250,8 @@ namespace Felsökning
             if (string.IsNullOrWhiteSpace(value: value))
             {
                 throw new StatusException(
-                    "The given string was either null, empty, or whitespace",
-                    new ArgumentException($"The given string was either null, empty, or whitespace", nameof(value)));
+                    NullOrEmptyWhitespaceMessage,
+                    new ArgumentException(NullOrEmptyWhitespaceMessage, nameof(value)));
             }
 
             // Check for common SQL injection patterns
@@ -286,8 +289,8 @@ namespace Felsökning
             if (string.IsNullOrWhiteSpace(value: value))
             {
                 throw new StatusException(
-                    "The given string was either null, empty, or whitespace",
-                    new ArgumentException("The given string was either null, empty, or whitespace", nameof(value)));
+                    NullOrEmptyWhitespaceMessage,
+                    new ArgumentException(NullOrEmptyWhitespaceMessage, nameof(value)));
             }
 
             if (value.Length != length)

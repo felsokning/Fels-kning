@@ -18,6 +18,8 @@ namespace Felsökning.Tests
     {
         private static IEnumerable<int> TestData => new[] { 1, 2, 3, 4 };
 
+        public required Microsoft.VisualStudio.TestTools.UnitTesting.TestContext TestContext { get; set; }
+
         [TestMethod]
         [TestCategory("AsyncEnumerable")]
         [Description("Verifies that a List can be converted to IAsyncEnumerable")]
@@ -27,7 +29,7 @@ namespace Felsökning.Tests
             var sut = new List<int>(TestData);
 
             // Act
-            var results = sut.ToIAsyncEnumerable<int>();
+            var results = sut.ToIAsyncEnumerable<int>(TestContext.CancellationToken);
 
             // Assert
             results.Should().NotBeNull("IAsyncEnumerable should be created");
@@ -49,7 +51,7 @@ namespace Felsökning.Tests
             var sut = (ICollection<int>)collection;
 
             // Act
-            var results = sut.ToIAsyncEnumerable<int>();
+            var results = sut.ToIAsyncEnumerable<int>(TestContext.CancellationToken);
 
             // Assert
             results.Should().NotBeNull("IAsyncEnumerable should be created");
@@ -70,7 +72,7 @@ namespace Felsökning.Tests
             var sut = TestData;
 
             // Act
-            var results = sut.ToIAsyncEnumerable();
+            var results = sut.ToIAsyncEnumerable(TestContext.CancellationToken);
 
             // Assert
             results.Should().NotBeNull("IAsyncEnumerable should be created");
@@ -85,7 +87,7 @@ namespace Felsökning.Tests
         [TestMethod]
         [TestCategory("Sorting")]
         [Description("Verifies multi-property chained sorting")]
-        public void OrderByChained_WhenGivenMultipleProperties_ShouldSortCorrectly()
+        public void OrderByChained_WhenGivenMultipleProperties_Collection_ShouldSortCorrectly()
         {
             // Arrange
             var testData = new[]
@@ -125,6 +127,231 @@ namespace Felsökning.Tests
                 new SampleJson { Id = 2, Completed = true, Title = "B Test Title", UserId = 1 },
                 options => options.ExcludingMissingMembers(),
                 "Third item should be Id=2, UserId=1");
+        }
+
+        [TestMethod]
+        [TestCategory("Sorting")]
+        [Description("Verifies multi-property chained sorting")]
+        public void OrderByChained_WhenGivenMultipleProperties_Enumerable_ShouldSortCorrectly()
+        {
+            // Arrange
+            var testData = new[]
+            {
+                new SampleJson { Id = 1, Completed = true, Title = "A Test Title", UserId = 0 },
+                new SampleJson { Id = 2, Completed = true, Title = "A Test Title", UserId = 0 },
+                new SampleJson { Id = 2, Completed = true, Title = "B Test Title", UserId = 1 },
+            };
+
+            var sut = (IEnumerable<SampleJson>)testData;
+
+            // Act
+            var result = sut.OrderByChained([x => x.Id, x => x.UserId]);
+
+            // Assert
+            result.Should().NotBeNull()
+                .And.HaveCount(3, "Should contain all test items");
+
+            var resultList = result.ToList();
+
+            // Verify sort order
+            resultList.Should().BeInAscendingOrder(x => x.Id)
+                .And.ThenBeInAscendingOrder(x => x.UserId, "Items should be sorted by Id then UserId");
+
+            // Verify specific positions
+            resultList[0].Should().BeEquivalentTo(
+                new SampleJson { Id = 1, Completed = true, Title = "A Test Title", UserId = 0 },
+                options => options.ExcludingMissingMembers(),
+                "First item should be Id=1, UserId=0");
+
+            resultList[1].Should().BeEquivalentTo(
+                new SampleJson { Id = 2, Completed = true, Title = "A Test Title", UserId = 0 },
+                options => options.ExcludingMissingMembers(),
+                "Second item should be Id=2, UserId=0");
+
+            resultList[2].Should().BeEquivalentTo(
+                new SampleJson { Id = 2, Completed = true, Title = "B Test Title", UserId = 1 },
+                options => options.ExcludingMissingMembers(),
+                "Third item should be Id=2, UserId=1");
+        }
+
+        [TestMethod]
+        [TestCategory("Sorting")]
+        [Description("Verifies multi-property chained sorting")]
+        public void OrderByChained_WhenGivenMultipleProperties_List_ShouldSortCorrectly()
+        {
+            // Arrange
+            var testData = new[]
+            {
+                new SampleJson { Id = 1, Completed = true, Title = "A Test Title", UserId = 0 },
+                new SampleJson { Id = 2, Completed = true, Title = "A Test Title", UserId = 0 },
+                new SampleJson { Id = 2, Completed = true, Title = "B Test Title", UserId = 1 },
+            };
+
+            var sut = new List<SampleJson>(testData);
+
+            // Act
+            var result = sut.OrderByChained([x => x.Id, x => x.UserId]);
+
+            // Assert
+            result.Should().NotBeNull()
+                .And.HaveCount(3, "Should contain all test items");
+
+            var resultList = result.ToList();
+
+            // Verify sort order
+            resultList.Should().BeInAscendingOrder(x => x.Id)
+                .And.ThenBeInAscendingOrder(x => x.UserId, "Items should be sorted by Id then UserId");
+
+            // Verify specific positions
+            resultList[0].Should().BeEquivalentTo(
+                new SampleJson { Id = 1, Completed = true, Title = "A Test Title", UserId = 0 },
+                options => options.ExcludingMissingMembers(),
+                "First item should be Id=1, UserId=0");
+
+            resultList[1].Should().BeEquivalentTo(
+                new SampleJson { Id = 2, Completed = true, Title = "A Test Title", UserId = 0 },
+                options => options.ExcludingMissingMembers(),
+                "Second item should be Id=2, UserId=0");
+
+            resultList[2].Should().BeEquivalentTo(
+                new SampleJson { Id = 2, Completed = true, Title = "B Test Title", UserId = 1 },
+                options => options.ExcludingMissingMembers(),
+                "Third item should be Id=2, UserId=1");
+        }
+
+        [TestMethod]
+        [TestCategory("Sorting")]
+        [Description("Verifies multi-property chained descending sorting")]
+        public void OrderByDescendingChained_WhenGivenMultipleProperties_Collection_ShouldSortCorrectly()
+        {
+            // Arrange
+            var testData = new[]
+            {
+                new SampleJson { Id = 1, Completed = true, Title = "A Test Title", UserId = 0 },
+                new SampleJson { Id = 2, Completed = true, Title = "C Test Title", UserId = 2 },
+                new SampleJson { Id = 2, Completed = true, Title = "B Test Title", UserId = 1 },
+            };
+
+            var sut = new Collection<SampleJson>(testData);
+
+            // Act
+            var result = ((ICollection<SampleJson>)sut).OrderByDescendingChained([x => x.Id, x => x.UserId]);
+
+            // Assert
+            result.Should().NotBeNull()
+                .And.HaveCount(3, "Should contain all test items");
+
+            var resultList = result.ToList();
+
+            // Verify sort order - descending by Id, then descending by UserId
+            resultList.Should().BeInDescendingOrder(x => x.Id)
+                .And.ThenBeInDescendingOrder(x => x.UserId, "Items should be sorted by Id desc then UserId desc");
+
+            // Verify specific positions
+            resultList[0].Should().BeEquivalentTo(
+                new SampleJson { Id = 2, Completed = true, Title = "C Test Title", UserId = 2 },
+                options => options.ExcludingMissingMembers(),
+                "First item should be Id=2, UserId=2");
+
+            resultList[1].Should().BeEquivalentTo(
+                new SampleJson { Id = 2, Completed = true, Title = "B Test Title", UserId = 1 },
+                options => options.ExcludingMissingMembers(),
+                "Second item should be Id=2, UserId=1");
+
+            resultList[2].Should().BeEquivalentTo(
+                new SampleJson { Id = 1, Completed = true, Title = "A Test Title", UserId = 0 },
+                options => options.ExcludingMissingMembers(),
+                "Third item should be Id=1, UserId=0");
+        }
+
+        [TestMethod]
+        [TestCategory("Sorting")]
+        [Description("Verifies multi-property chained descending sorting")]
+        public void OrderByDescendingChained_WhenGivenMultipleProperties_Enumerable_ShouldSortCorrectly()
+        {
+            // Arrange
+            var testData = new[]
+            {
+                new SampleJson { Id = 1, Completed = true, Title = "A Test Title", UserId = 0 },
+                new SampleJson { Id = 2, Completed = true, Title = "C Test Title", UserId = 2 },
+                new SampleJson { Id = 2, Completed = true, Title = "B Test Title", UserId = 1 },
+            };
+
+            var sut = (IEnumerable<SampleJson>)testData;
+
+            // Act
+            var result = sut.OrderByDescendingChained([x => x.Id, x => x.UserId]);
+
+            // Assert
+            result.Should().NotBeNull()
+                .And.HaveCount(3, "Should contain all test items");
+
+            var resultList = result.ToList();
+
+            // Verify sort order - descending by Id, then descending by UserId
+            resultList.Should().BeInDescendingOrder(x => x.Id)
+                .And.ThenBeInDescendingOrder(x => x.UserId, "Items should be sorted by Id desc then UserId desc");
+
+            // Verify specific positions
+            resultList[0].Should().BeEquivalentTo(
+                new SampleJson { Id = 2, Completed = true, Title = "C Test Title", UserId = 2 },
+                options => options.ExcludingMissingMembers(),
+                "First item should be Id=2, UserId=2");
+
+            resultList[1].Should().BeEquivalentTo(
+                new SampleJson { Id = 2, Completed = true, Title = "B Test Title", UserId = 1 },
+                options => options.ExcludingMissingMembers(),
+                "Second item should be Id=2, UserId=1");
+
+            resultList[2].Should().BeEquivalentTo(
+                new SampleJson { Id = 1, Completed = true, Title = "A Test Title", UserId = 0 },
+                options => options.ExcludingMissingMembers(),
+                "Third item should be Id=1, UserId=0");
+        }
+
+        [TestMethod]
+        [TestCategory("Sorting")]
+        [Description("Verifies multi-property chained descending sorting")]
+        public void OrderByDescendingChained_WhenGivenMultipleProperties_List_ShouldSortCorrectly()
+        {
+            // Arrange
+            var testData = new[]
+            {
+                new SampleJson { Id = 1, Completed = true, Title = "A Test Title", UserId = 0 },
+                new SampleJson { Id = 2, Completed = true, Title = "C Test Title", UserId = 2 },
+                new SampleJson { Id = 2, Completed = true, Title = "B Test Title", UserId = 1 },
+            };
+
+            var sut = new List<SampleJson>(testData);
+
+            // Act
+            var result = sut.OrderByDescendingChained([x => x.Id, x => x.UserId]);
+
+            // Assert
+            result.Should().NotBeNull()
+                .And.HaveCount(3, "Should contain all test items");
+
+            var resultList = result.ToList();
+
+            // Verify sort order - descending by Id, then descending by UserId
+            resultList.Should().BeInDescendingOrder(x => x.Id)
+                .And.ThenBeInDescendingOrder(x => x.UserId, "Items should be sorted by Id desc then UserId desc");
+
+            // Verify specific positions
+            resultList[0].Should().BeEquivalentTo(
+                new SampleJson { Id = 2, Completed = true, Title = "C Test Title", UserId = 2 },
+                options => options.ExcludingMissingMembers(),
+                "First item should be Id=2, UserId=2");
+
+            resultList[1].Should().BeEquivalentTo(
+                new SampleJson { Id = 2, Completed = true, Title = "B Test Title", UserId = 1 },
+                options => options.ExcludingMissingMembers(),
+                "Second item should be Id=2, UserId=1");
+
+            resultList[2].Should().BeEquivalentTo(
+                new SampleJson { Id = 1, Completed = true, Title = "A Test Title", UserId = 0 },
+                options => options.ExcludingMissingMembers(),
+                "Third item should be Id=1, UserId=0");
         }
     }
 }
